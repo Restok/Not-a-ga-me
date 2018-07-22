@@ -1,0 +1,55 @@
+.popUps{
+	position:absolute;
+	width:800px;
+	height:500px;
+	z-index: 7;
+}
+.closeButton{
+	position: absolute;
+	top: 300px;
+	width: 250px;
+	height: 90px;
+	left:275px;
+	margin:0;
+	background-image: 
+	border-style: none;
+	background-color: #ff0000;
+	z-index: 8;
+	transform:scale(1);
+
+}
+.gameBG{
+	transform: translate3d(0,0,0);
+	background-image: url("assets/Medicated Mushroom Background.png")
+}
+.closeButton:hover{
+	cursor:pointer;
+	transform:scale(1.2);
+}
+.scenes{
+	position:absolute;
+	z-index:7;
+}
+#wrapper {
+	position:absolute;
+  white-space: nowrap;
+
+    border: 1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+
+.ddeath{
+	opacity:1;
+	position: absolute;
+	top:175px;
+	left:375px;
+	z-index:6;
+}
+.fadeOutAnimation{
+	animation-name: fadeOut;
+	animation-duration: 1s;
+}
+@keyframes fadeOut{
+	from {opacity:1;}
+    to {opacity:0;}
+}
