@@ -47,6 +47,8 @@ var setSpeedArray = [];
 var ctx;
 var tempSpeedX;
 var tempSpeedY;
+var noobMinions = [];
+var minion = null;
 
 function circlePath(){
 	circle.centerX = noobBoss.x + noobBoss.width/2;
@@ -67,6 +69,7 @@ var circle = {centerX:250, centerY:250, radius: 200, angle:0}
 var ball = {x:0, y:0};
 
 function startGame() {
+
     myGameArea.start();
     player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
     // createEnemy(650, 300, 650, 500);
@@ -87,7 +90,10 @@ function removeFromAll(removed){
     }
 }
 function createNoobBoss(){
-		noobBoss = new component(125, 125, "red", 650, 300);
+		noobBoss = new component(170, 229, "assets/The Jackhammer.png", 650, 300, "image");
+		noobBoss.health = 10;
+		noobBoss.isBoss = true;
+		noobBoss.friendly = false;
 		allGameElements.push(noobBoss);
 		spinny = new component(30, 30, "red", ball.x, ball.y)
 		allGameElements.push(spinny);
@@ -156,7 +162,6 @@ function spawnItems(){
 			)
 		itemChosen = itemsArray[itemIndex];
 		itemsArray.splice(itemIndex, 1)
-		console.log(itemChosen);
 		switch(itemChosen){
 			case 0:
 				dmg = new component(50, 50, "assets/Subreme Powerup Pickup.png", 725, 450, "image");
@@ -223,6 +228,7 @@ function createEnemy2(x, y){
 	boss2 = new component(180, 207, "assets/Boss 2 (Medicated Mushroom).png", x, y, "image");
 	boss2.friendly = false;
 	boss2.health = 500;
+	boss2.isBoss = true;
 	timeUntilGone = 0;
 	allGameElements.push(boss2);
 
@@ -280,11 +286,12 @@ function bulletsDamage(subject, damager, damage){
 			subject.health -= damage;
 			damager[i] = null;
 			damager.splice(i, 1)
-			if(subject.friendly == true){
+			if(subject.friendly){
 				setHealth();
 			}
-			else{
+			else if(subject.isBoss){
 				updateBossHealth(subject);
+				console.log("set")
 			}
 		}
 	}
@@ -312,8 +319,7 @@ function dontfuckingwalkonchests(){
 		}
 		else{
   		itemChest.image.src = "assets/Treasure Chest Opened.png";
-      console.log(player.x);
-      console.log(player.y);
+
 
   		itemChest.height = 263;
   		itemChest.y = 400 - 131;
@@ -391,12 +397,9 @@ function boss2Behavior(){
 			myGameArea.frameNo += 1;
 			if(everyinterval(150)){
 				trueRandom = Math.random();
-				console.log(trueRandom);
 				atkIndex2 = Math.floor(roundTo(trueRandom));
 
-				console.log(atkIndex2)
 				Boss2Action = Boss2Atk[atkIndex2];
-				console.log(Boss2Action);
 				Boss2Attacking = true;
 
 			}
@@ -729,7 +732,8 @@ function createEnemy(startX, startY, endX, endY){
     enemy.endY = endY;
     enemy.startX = startX;
     enemy.startY = startY;
-	  enemy.health = 10;
+		enemy.health = 10;
+		enemy.isBoss = true;
     allGameElements.push(enemy);
 }
 
@@ -965,7 +969,7 @@ var myGameArea = {
 class component{
   constructor(width, height, color, x, y, type){
     this.ctx = myGameArea.context;
-
+		this.isBoss = false;
     this.color = color;
     this.type = type;
     if (type == "image") {
@@ -1239,7 +1243,12 @@ function updateEverything(){
         supullets[i].update();
 
 
-    }
+		}
+		for(x = 0; x < noobMinions.length; x++){
+
+			noobMinions[x].newPos();
+			noobMinions[x].update();
+	}
    disappearWhenTouchingWall(sprayBulletsArray);
 
     for (i = 0; i < sprayBulletsArray.length; i += 1) {
@@ -1265,13 +1274,44 @@ function collisionDamage(enemyName, target, frameVar){
 			frameVar.frames = (enemyName == spinny ? 1: 0);
 		}
 }
+var spawnCount = 0;
+function noobMinionBehavior(){
+	bulletsDamage(player, noobMinions, 1);
 
+	for(var j = 0; j< noobMinions.length; j++){
+		followPlayer(noobMinions[j], player, Math.floor(Math.random()*3)+5);
+		bulletsDamage(noobMinions[j], supullets, player.Bitem ? 1.3:1);
 
-
+		if(noobMinions[j].health<=0){
+			noobMinions[j] = null;
+			noobMinions.splice(j,1);
+		}
+	}
+}
+function spawnMinions(){
+		spawnCount = Math.floor(Math.random()*3)+1;
+		for(i = 0; i< spawnCount; i++){
+			minion = new component(40, 40, "blue", (noobBoss.x + Math.floor(Math.random() * 201) - 100), (noobBoss.y + Math.floor(Math.random() * 201) - 100));
+			minion.health = 10;
+			minion.friendly = false;
+			noobMinions.push(minion);
+		}
+} 
+noobBossAction = [0, 1];
 function noobBossBehavior(){
-	followPlayer(noobBoss, player);
+
+	myGameArea.frameNo += 1;
+	followPlayer(noobBoss, player, 2);
 	collisionDamage(noobBoss, player, immunityFrame);
 	collisionDamage(spinny,player, immunityFrame2);
+	bulletsDamage(noobBoss, supullets, player.Bitem ? 1.3:1)
+	bulletsDamage(spinny, supullets, 0);
+	if(minion!== null){
+		noobMinionBehavior()
+	}
+	if(everyinterval(800)){
+		spawnMinions();
+	}
 }
 var fps = 50;
 function updateGameArea() {
@@ -1485,20 +1525,20 @@ window.onkeyup = function(e) {
   }
 }
 
-function followPlayer(enemyName, target){
+function followPlayer(enemyName, target, speed){
 		var yLen = (enemyName.y) - target.y+target.height/3;
 		var xLen = (enemyName.x) - target.x+target.width/3;
 
 //  MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
 //  THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
 						if(yLen<=0 && xLen>=0){
-							multiplier3 = (xLen*-1 + yLen)/3;
+							multiplier3 = (xLen*-1 + yLen)/speed;
 						}
 						else if (yLen>=0 && xLen<=0){
-							multiplier3 = (xLen+yLen*-1)/3;
+							multiplier3 = (xLen+yLen*-1)/speed;
 						}
 						else{
-							multiplier3 = (xLen+yLen)/3;
+							multiplier3 = (xLen+yLen)/speed;
 						}
 
 					if((yLen <= 0 && xLen>=0) || (xLen<=0 && yLen<=0) || (yLen>=0 && xLen <=0)){
@@ -1621,25 +1661,5 @@ function trackEnemy(enemyName, trackArray){
 		}  
 		}
 }
-// function track enemy
-//   get bullet x
-//   get bullet y
-//   get enemy x
-//   get enemy y
-//   if bullet x is less than enemy x
 
-//   then
-
-//   if bullet y is less than enemy y
-//     rotate counter clockwise until 
-  
-//   else if bullet y is greater than enemy y
-//   decrease bullet speed y
-//   decrease bullet speed x
-
-//   else if bullet y is equal to enemy y
-//   bullet speed y stays the same;
-  
-//   if bullet x is greater than enemy x
-//   bullet x 
 
