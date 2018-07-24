@@ -45,14 +45,33 @@ var d3;
 var bulletsNumber = 1;
 var setSpeedArray = [];
 var ctx;
+var tempSpeedX;
+var tempSpeedY;
 
+function circlePath(){
+	circle.centerX = noobBoss.x + noobBoss.width/2;
+	circle.centerY = noobBoss.y + noobBoss.height/2;
+	spinny.x = circle.centerX + Math.cos(circle.angle) * circle.radius;
+	spinny.y = circle.centerY + Math.sin(circle.angle) * circle.radius;
+	circle.angle += 0.1;
+}
+// function circlePathTrack(tracking, tracker){
+	
+// 	tempSpeedX = tracking.speedX+tracker.speedX;
+// 	tempSpeedY = tracking.speedY+tracker.speedY;
+// 	tracker.speedX = tempSpeedX;
+// 	tracker.speedY = tempSpeedY;
+
+// }
+var circle = {centerX:250, centerY:250, radius: 200, angle:0}
+var ball = {x:0, y:0};
 
 function startGame() {
     myGameArea.start();
     player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
-    createEnemy(650, 300, 650, 500);
-	        requestAnimationFrame(updateGameArea);
-
+    // createEnemy(650, 300, 650, 500);
+		createNoobBoss();
+		requestAnimationFrame(updateGameArea);
 		
   	player.health = 6;
   	player.friendly = true;
@@ -67,7 +86,14 @@ function removeFromAll(removed){
       allGameElements.splice(index, 1);
     }
 }
+function createNoobBoss(){
+		noobBoss = new component(125, 125, "red", 650, 300);
+		allGameElements.push(noobBoss);
+		spinny = new component(30, 30, "red", ball.x, ball.y)
+		allGameElements.push(spinny);
+		
 
+}
 function setLevel(){
   switch(level){
     case 0:
@@ -116,7 +142,7 @@ function correspondItem(){
 			break;
 	}
 }
-
+var itemIndex;
 function spawnItems(){
 	if(!spawnOne){
       portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
@@ -124,8 +150,12 @@ function spawnItems(){
       player.x = 550;
       player.y = 400;
       player.speedX = 0;
-      player.speedY = 0;
-		itemChosen = itemsArray[Math.floor(roundTo(Math.random()))];
+			player.speedY = 0;
+			itemIndex = Math.floor(
+				Math.round(Math.random()*itemsArray.length - itemsArray.length > 2 ? 1 : 0)
+			)
+		itemChosen = itemsArray[itemIndex];
+		itemsArray.splice(itemIndex, 1)
 		console.log(itemChosen);
 		switch(itemChosen){
 			case 0:
@@ -231,12 +261,12 @@ var Boss2Action = 0;
 var boss2IsAlive = true;
 var moveActive = true;
 var atkTime = 0;
-var immunityFrame = 0;
+var immunityFrame = {frames:0};
 
-function immunity(){
-	immunityFrame+=1;
+function immunity(numOfFrames, frameVar){
+	frameVar.frames+=1;
 	canTakeDamage = false;
-	if(immunityFrame == 1 ||immunityFrame> 100){
+	if(frameVar.frames == 1 || frameVar.frames> numOfFrames){
 		canTakeDamage = true;
 	}
 	else{
@@ -302,7 +332,6 @@ function dontfuckingwalkonchests(){
 }
 }
 function boss2Behavior(){
-	immunity();
 	if(boss2.health <= 0){
 		boss2.image.src = "assets/Boss 2 (Medicated Mushroom).png"
 		boss2.width = 180;
@@ -343,16 +372,7 @@ function boss2Behavior(){
 			created = true;
 		}
 	}
-	if(boss2IsAlive&&boss2.crashWith(player)){
-		if(canTakeDamage){
-			player.health-=1;
-			setHealth();
-			if(immunityFrame > 25){
-				immunityFrame = 1;
-			}
-		}
-	
-	}
+	collisionDamage(boss2,player);
 	if(boss2IsAlive){
 		bulletsDamage(player, sprayBulletsArray, 1);
 		if(player.Bitem){
@@ -417,7 +437,6 @@ function boss2Behavior(){
 					}
 					break;
 				case 0:
-					console.log("what the actual fuck");
 					break;
 			}
 
@@ -643,7 +662,6 @@ function dash(enemynum){
 			stopMeter = 0;
 			tempX = player.x;
 			tempY = player.y;
-			console.log("gonna run to: ", tempX, tempY)
 			dashSetup = true;
 		}
 		else{
@@ -750,7 +768,6 @@ function enemyFireSpiral(enemynum){
     else if(spiral2Toggle){
       spiralSpeedX -= 0.5;
       spiralSpeedY -=0.5;
-      console.log(roundTo(spiralSpeedY,2))
 
     }
     else if(spiral3Toggle){
@@ -811,8 +828,7 @@ function enemyFire(enemynum){
 
     var ydif = (player.y) - enemynum.y-enemynum.height/1.7;
     var xdif = (player.x) - enemynum.x -enemynum.width/2;
-		console.log("the difference in y is:", ydif)
-    console.log("the difference in x is:", xdif)
+
 //	MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
 //	THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
 
@@ -831,7 +847,6 @@ function enemyFire(enemynum){
       enemyBullet.speedY = (-ydif/multiplier);
     }
     else if(xdif<=0 && ydif<=0){
-      console.log(multiplier);
       enemyBullet.speedX = (-xdif/multiplier);
       enemyBullet.speedY = (-ydif/multiplier);
     }
@@ -938,7 +953,6 @@ var myGameArea = {
         document.getElementById("wrapper").insertBefore(this.canvas, document.getElementById("wrapper").childNodes[0]);
         this.frameNo = 0;        
     
-        this.interval = requestAnimationFrame(updateGameArea, 20);
     
     },
     clear : function() {
@@ -996,8 +1010,8 @@ class component{
     }
     crashWith(otherobj) {
       if(otherobj == player){
-        var myleft = this.x + this.width/2;
-        var myright = this.x + this.width/2;
+        var myleft = this.x;
+        var myright = this.x + this.width;
 
       }
       else{
@@ -1162,7 +1176,6 @@ function boss1Behavior(){
           attacking = false;
           Boss1Action = 0;
           fireCtrl = 0;
-          console.log(Boss1Action);
         }
      } 
      else if(Boss1Action == -1){
@@ -1183,7 +1196,6 @@ function boss1Behavior(){
     if ((everyinterval(150)) && (attacking == false) && (enemyIsAlive)) {
         var indexnum = Math.floor(roundTo(Math.random()))
         Boss1Action = Boss1Atk[indexnum]
-        console.log(indexnum)
       }
 	if(enemyIsAlive){
 		if(player.Bitem == false){
@@ -1235,14 +1247,42 @@ function updateEverything(){
         sprayBulletsArray[i].update();
     }
 }
+var immunityFrame2 = {frames:0};
+
+function collisionDamage(enemyName, target, frameVar){
+	if(enemyName.crashWith(target)){
+		immunity((enemyName == spinny ? 4:100), frameVar);
+		if(canTakeDamage){
+			target.health-=1;
+			setHealth();
+			if(frameVar.frames > (enemyName == spinny ? 4:100)){
+				frameVar.frames = 1;
+
+			}
+		}
+		}
+		else{
+			frameVar.frames = (enemyName == spinny ? 1: 0);
+		}
+}
+
+
+
+function noobBossBehavior(){
+	followPlayer(noobBoss, player);
+	collisionDamage(noobBoss, player, immunityFrame);
+	collisionDamage(spinny,player, immunityFrame2);
+}
 var fps = 50;
 function updateGameArea() {
-	    setTimeout(function() {
 	        requestAnimationFrame(updateGameArea);
 	        myGameArea.clear();
 
+					circlePath();
 
-	      if(player.x >= 400){
+
+					noobBossBehavior();
+					if(player.x >= 400){
 	        scrollX = player.x - 400;
 	      }
 	      else{
@@ -1271,7 +1311,6 @@ function updateGameArea() {
 	 
 
 		getItem(correspondItem());
-	    }, 1000 / fps);
 	}
     
 
@@ -1367,7 +1406,6 @@ window.onkeydown = function(e) {
 var bulletsSpeed = 5;
 var index2;
 function setAllBulletSpeedX(thespeedofbullets){
-	console.log("setting speed");
     for(i = 0; i< bulletsNumber; i++){
       for(z = 0; z< setSpeedArray.length; z++){
         if(z<=0){
@@ -1446,75 +1484,142 @@ window.onkeyup = function(e) {
    player.image.src = "assets/Player Sprite.png"
   }
 }
-var xLen;
-var yLen;
-var angleOfAttack;
-var multiplier3;
-var targetSpeedX;
-var targetSpeedY;
-function trackEnemy(enemyName, trackArray){
-if(enemyName!==null){
-    for(i = 0; i<trackArray.length;i++){
-    var yLen = (trackArray[i].y) - enemyName.y-enemyName.height/1.7;
-    var xLen = (trackArray[i].x) - enemyName.x -enemyName.width/2;
+
+function followPlayer(enemyName, target){
+		var yLen = (enemyName.y) - target.y+target.height/3;
+		var xLen = (enemyName.x) - target.x+target.width/3;
 
 //  MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
 //  THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
-	if(Math.abs(xLen)+Math.abs(yLen)<500){
-		    if(yLen<=0 && xLen>=0){
-		      multiplier3 = (xLen*-1 + yLen)/5;
-		    }
-		    else if (yLen>=0 && xLen<=0){
-		      multiplier3 = (xLen+yLen*-1)/5;
-		    }
-		    else{
-		      multiplier3 = (xLen+yLen)/5;
-		    }
+						if(yLen<=0 && xLen>=0){
+							multiplier3 = (xLen*-1 + yLen)/3;
+						}
+						else if (yLen>=0 && xLen<=0){
+							multiplier3 = (xLen+yLen*-1)/3;
+						}
+						else{
+							multiplier3 = (xLen+yLen)/3;
+						}
 
-		   if((yLen <= 0 && xLen>=0) || (xLen<=0 && yLen<=0) || (yLen>=0 && xLen <=0)){
-		      targetSpeedX = (xLen/multiplier3);
-		      targetSpeedY = (yLen/multiplier3);
-		    }
-		    else if(yLen>=0 && xLen >=0){
-		      targetSpeedX = (-xLen/multiplier3);
-		      targetSpeedY = (-yLen/multiplier3);
-		    }
-		    else if (yLen = 0){
-		      targetSpeedX = (xLen/multiplier3);
-		      targetSpeedY = (-yLen/multiplier3);
-		    }
+					if((yLen <= 0 && xLen>=0) || (xLen<=0 && yLen<=0) || (yLen>=0 && xLen <=0)){
+							targetSpeedX = (xLen/multiplier3);
+							targetSpeedY = (yLen/multiplier3);
+						}
+						else if(yLen>=0 && xLen >=0){
+							targetSpeedX = (-xLen/multiplier3);
+							targetSpeedY = (-yLen/multiplier3);
+						}
+						else if (yLen = 0){
+							targetSpeedX = (xLen/multiplier3);
+							targetSpeedY = (-yLen/multiplier3);
+						}
 
-		    else{
-		      targetSpeedX = (xLen/multiplier3);
-		      targetSpeedY = (yLen/multiplier3);
-		    }
-		    if(trackArray[i].speedX>=targetSpeedX){
+						else{
+							targetSpeedX = (xLen/multiplier3);
+							targetSpeedY = (yLen/multiplier3);
+						}
+						if(enemyName.speedX>=targetSpeedX){
 
-		        trackArray[i].speedX -=0.01;
+								enemyName.speedX =targetSpeedX
 
 
-					if(trackArray[i].speedY<targetSpeedY){
-						trackArray[i].speedY -= 0.01;
+							if(targetSpeedY<=0){
+								enemyName.speedY = targetSpeedY;
+							}
+							else{
+								enemyName.speedY = targetSpeedY;
+
+							}
+							}
+						else if(enemyName.speedX<targetSpeedX){
+								
+								enemyName.speedX =  targetSpeedX;
+								if(targetSpeedY<=0){
+									enemyName.speedY =  targetSpeedY;
+							}
+							else{
+								enemyName.speedY = targetSpeedY;
+
+							}
+
 				}
 
-		      }
-		    else if(trackArray[i].speedX<targetSpeedX){
-						
-		        trackArray[i].speedX += 0.01;
-		  		if(trackArray[i].speedY>targetSpeedY){
-			        trackArray[i].speedY -= 0.01;
-		}
-		}
-			// var bulSpeedX = parseFloat(trackArray[i].speedX);
-      //   	trackArray[i].speedX = +bulSpeedX.toFixed(2);
-			// var bulSpeedY = parseFloat(trackArray[i].speedY);
-      //   	trackArray[i].speedY = +bulSpeedY.toFixed(2);	
-      //   	console.log(bulSpeedX);
-      //   	console.log(bulSpeedY);
-	}
-}        	
 
-}
+	}  
+
+
+function trackEnemy(enemyName, trackArray){
+	if(enemyName!==null){
+		trackTime+=1;      	
+
+		for(i = 0; i<trackArray.length;i++){
+			var yLen = (trackArray[i].y) - enemyName.y-enemyName.height/1.7;
+			var xLen = (trackArray[i].x) - enemyName.x -enemyName.width/2;
+
+	//  MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
+	//  THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
+			if(trackTime%50==0 || subPixelRendering){
+				if(Math.abs(xLen)+Math.abs(yLen)<500){
+							if(yLen<=0 && xLen>=0){
+								multiplier3 = (xLen*-1 + yLen)/5;
+							}
+							else if (yLen>=0 && xLen<=0){
+								multiplier3 = (xLen+yLen*-1)/5;
+							}
+							else{
+								multiplier3 = (xLen+yLen)/5;
+							}
+
+						if((yLen <= 0 && xLen>=0) || (xLen<=0 && yLen<=0) || (yLen>=0 && xLen <=0)){
+								targetSpeedX = (xLen/multiplier3);
+								targetSpeedY = (yLen/multiplier3);
+							}
+							else if(yLen>=0 && xLen >=0){
+								targetSpeedX = (-xLen/multiplier3);
+								targetSpeedY = (-yLen/multiplier3);
+							}
+							else if (yLen = 0){
+								targetSpeedX = (xLen/multiplier3);
+								targetSpeedY = (-yLen/multiplier3);
+							}
+
+							else{
+								targetSpeedX = (xLen/multiplier3);
+								targetSpeedY = (yLen/multiplier3);
+							}
+							if(trackArray[i].speedX>=targetSpeedX){
+
+									trackArray[i].speedX -= subPixelRendering ? 0.01 : 1;
+
+
+								if(targetSpeedY<=0){
+									trackArray[i].speedY -=  subPixelRendering ? 0.01 : 1;
+								}
+								else{
+									trackArray[i].speedY +=  subPixelRendering ? 0.01 : 1;
+
+								}
+								}
+							else if(trackArray[i].speedX<targetSpeedX){
+									
+									trackArray[i].speedX +=  subPixelRendering ? 0.01 : 1;
+									if(targetSpeedY<=0){
+										trackArray[i].speedY -=  subPixelRendering ? 0.01 : 1;
+								}
+								else{
+									trackArray[i].speedY +=  subPixelRendering ? 0.01 : 1;
+
+								}
+
+					}
+						var bulSpeedX = parseFloat(trackArray[i].speedX);
+								trackArray[i].speedX = +bulSpeedX.toFixed(2);
+						var bulSpeedY = parseFloat(trackArray[i].speedY);
+								trackArray[i].speedY = +bulSpeedY.toFixed(2);	
+				}
+			}
+		}  
+		}
 }
 // function track enemy
 //   get bullet x

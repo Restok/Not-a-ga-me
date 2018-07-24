@@ -1,0 +1,1 @@
+var supulletsRender = document.createElement
