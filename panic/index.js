@@ -32,8 +32,7 @@ var b2Bullets;
 var itemChest = null;
 var getPreviousPlayerPos = false;
 var petDirection = "left";
-var itemsArray = [0, 1];
-var itemChosen = -1;
+
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
@@ -49,24 +48,18 @@ var tempSpeedX;
 var tempSpeedY;
 var noobMinions = [];
 var minion = null;
+var noobPet = null;
 
-function circlePath(){
-	circle.centerX = noobBoss.x + noobBoss.width/2;
-	circle.centerY = noobBoss.y + noobBoss.height/2;
+function circlePath(following){
+	circle.centerX = following.x + following.width/2;
+	circle.centerY = following.y + following.height/2;
 	spinny.x = circle.centerX + Math.cos(circle.angle) * circle.radius;
 	spinny.y = circle.centerY + Math.sin(circle.angle) * circle.radius;
-	circle.angle += 0.1;
+	circle.angle += ball.speed;
 }
-// function circlePathTrack(tracking, tracker){
-	
-// 	tempSpeedX = tracking.speedX+tracker.speedX;
-// 	tempSpeedY = tracking.speedY+tracker.speedY;
-// 	tracker.speedX = tempSpeedX;
-// 	tracker.speedY = tempSpeedY;
 
-// }
 var circle = {centerX:250, centerY:250, radius: 200, angle:0}
-var ball = {x:0, y:0};
+var ball = {x:0, y:0, speed:0.1};
 
 function startGame() {
 
@@ -108,9 +101,13 @@ function setLevel(){
        createEnemy(650, 300, 650, 500);
        level += 1;
        supullets = [];
-       bossHealth = new component2(494, 3, "green", 150, 450, "a");
+			 bossHealth = new component2(494, 3, "green", 150, 450, "a");
+
+
        break;
-    case 1:
+		case 1:
+			immunityFrame.frame = 0;
+			immunityFrame2.frame = 0;
        supullets = [];
        removeFromAll(portal);
        removeFromAll(itemChest);
@@ -130,11 +127,6 @@ function setLevel(){
             level += 1;
           })
        })
-
-
-
-
-
         break;
   }
 }
@@ -149,6 +141,8 @@ function correspondItem(){
 	}
 }
 var itemIndex;
+var itemsArray = [0, 1];
+var itemChosen = -1;
 function spawnItems(){
 	if(!spawnOne){
       portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
@@ -157,9 +151,12 @@ function spawnItems(){
       player.y = 400;
       player.speedX = 0;
 			player.speedY = 0;
-			itemIndex = Math.floor(
-				Math.round(Math.random()*itemsArray.length - itemsArray.length > 2 ? 1 : 0)
-			)
+			itemIndex = Math.floor((Math.random()*itemsArray.length))
+			itemAcquired();
+			$("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function(){
+				$("#itemScreen").remove();
+			});
+
 		itemChosen = itemsArray[itemIndex];
 		itemsArray.splice(itemIndex, 1)
 		switch(itemChosen){
@@ -268,6 +265,7 @@ var boss2IsAlive = true;
 var moveActive = true;
 var atkTime = 0;
 var immunityFrame = {frames:0};
+var immunityFrame2 = {frames:0};
 
 function immunity(numOfFrames, frameVar){
 	frameVar.frames+=1;
@@ -337,27 +335,31 @@ function dontfuckingwalkonchests(){
 	}
 }
 }
+var ragePause = 0;
 function boss2Behavior(){
+	collisionDamage(boss2,player, immunityFrame);
+
 	if(boss2.health <= 0){
 		boss2.image.src = "assets/Boss 2 (Medicated Mushroom).png"
 		boss2.width = 180;
 		boss2.height = 207;
 		boss2.x = 750-boss2.width/2;
-		boss2.y = 400-boss2.height;
+		boss2.y = 400-boss2.height/2;
 		boss2.speedX = 0;
 		boss2.speedY = 0;
 		boss2IsAlive = false;
 		timeUntilGone +=1;
 		Boss2Action = 0;
 		sprayBulletsArray = [];
-		if(timeUntilGone >= 170){
+
+		if(timeUntilGone >= 200){
 			index = allGameElements.indexOf(boss2);
 			if (index > -1) {
 			allGameElements.splice(index, 1);
 			}
 		}
 		if(timeUntilGone <= 450){
-			scrollWrapper(265, 80);
+			scrollWrapper(265, 100);
 			player.speedX = 0;
 			player.speedY = 0;
 		}
@@ -378,7 +380,7 @@ function boss2Behavior(){
 			created = true;
 		}
 	}
-	collisionDamage(boss2,player);
+
 	if(boss2IsAlive){
 		bulletsDamage(player, sprayBulletsArray, 1);
 		if(player.Bitem){
@@ -453,7 +455,12 @@ function boss2Behavior(){
 			boss2.speedY = 0;
 			centerOnce = true;
 		}
-		jumpRage(boss2);
+		if(ragePause > 200){
+			jumpRage(boss2);
+		}
+		else{
+			ragePause+=1;
+		}
 	}
 }
 var jumpSrcs = ["assets/Earth Fragment 01.png","assets/Earth Fragment 02.png","assets/Earth Fragment 03.png","assets/Earth Fragment 04.png"];
@@ -559,7 +566,7 @@ function jumpRage(subject){
 					subject.speedY = 0;
 					subject.y = tempBossY;
 					jumpSetup = false;
-					sprayNumber = Math.floor(Math.random()*60)+40;
+					sprayNumber = Math.floor(Math.random()*20)+40;
 					if(sprayOnce){
 						for(i = 0; i<sprayNumber; i++){
 							sBX = roundTo(Math.random()*7, 2)+3;
@@ -626,16 +633,27 @@ var stopSetting = false;
 function boss2PetBehavior(operation){
 	if(boss2Pet!== null){
 		if(operation == "left"){
-			boss2Pet.x = player.x-player.width;
+			boss2Pet.x = player.x-player.width/2-20;
 			boss2Pet.y = player.y+(player.height/2);
 	}
 		else if(operation == "right"){
-			boss2Pet.x = player.x+player.width;
+			boss2Pet.x = player.x+player.width/2+20;
 			boss2Pet.y = player.y+(player.height/2);
 		}
 	}
 }
-
+function noobPetBehavior(operation){
+	if(noobPet!== null){
+		if(operation == "left"){
+			noobPet.x = player.x-player.width/2-40;
+			noobPet.y = player.y+(player.height/2);
+	}
+		else if(operation == "right"){
+			noobPet.x = player.x+player.width/2+40;
+			noobPet.y = player.y+(player.height/2);
+		}
+	}
+}
 function disappearWhenTouchingWall(bulletsArray){
   for(i = 0; i<bulletsArray.length; i++)
   {
@@ -1042,12 +1060,12 @@ function shoot(){
     supullet = new component(50, 50, "assets/Supreme Ammo.png", player.x+(player.width/2), player.y, "image");
 	if(player.Bitem == true){
 		supullet.image.src = "assets/Subreme Ammo.png"
-	  B = new component(30, 30, "assets/Subreme Powerup Pickup.png", player.x+(player.width/2), player.y+30, "image")
+	  B = new component(20, 20, "assets/Subreme Powerup Pickup.png", player.x+(player.width/2), player.y+30, "image")
     supullets.push(B);
     setSpeedArray.push(B);
   }
   if(player.robot == true){
-    notes = new component(10, 10, "blue", player.x+(player.width/2), player.y-15, "a")
+    notes = new component(20, 28, "assets/Robo Boy Bullet.png", player.x+(player.width/2), player.y-15, "image")
     supullets.push(notes);
     setSpeedArray.push(notes);
   }
@@ -1057,6 +1075,11 @@ function shoot(){
 		b2Bullets = new component(10, 10, "assets/Earth Fragment 01.png", boss2Pet.x+10, boss2Pet.y, "image");
 		 supullets.push(b2Bullets);
      setSpeedArray.push(b2Bullets);
+	}
+	if(noobPet!==null){
+		npBullets = new component(10, 10, "red", noobPet.x, noobPet.y+10);
+		 supullets.push(npBullets);
+     setSpeedArray.push(npBullets);
 	}
 
 }
@@ -1220,11 +1243,12 @@ var index;
 function updateEverything(){
 
 	for(var x = 0; x< allGameElements.length; x++){
-
         allGameElements[x].newPos();
         allGameElements[x].update();
     }
 	boss2PetBehavior(petDirection);
+	noobPetBehavior(petDirection);
+
     disappearWhenTouchingWall(enemyBullets)
     for (i = 0; i < enemyBullets.length; i += 1) {
         enemyBullets[i].newPos();
@@ -1256,7 +1280,6 @@ function updateEverything(){
         sprayBulletsArray[i].update();
     }
 }
-var immunityFrame2 = {frames:0};
 
 function collisionDamage(enemyName, target, frameVar){
 	if(enemyName.crashWith(target)){
@@ -1297,31 +1320,66 @@ function spawnMinions(){
 			noobMinions.push(minion);
 		}
 } 
-noobBossAction = [0, 1];
+noobBossIsAlive = true;
 function noobBossBehavior(){
+	if(noobBossIsAlive){
+		myGameArea.frameNo += 1;
+		followPlayer(noobBoss, player, 2);
+		collisionDamage(noobBoss, player, immunityFrame);
+		collisionDamage(spinny,player, immunityFrame2);
+		bulletsDamage(noobBoss, supullets, (player.Bitem) ? 1.3:1)
+		bulletsDamage(spinny, supullets, 0);
+		noobBoss.health <= 0 ? noobBossIsAlive = false: noobBossIsAlive = true;
+		if(minion!== null){
+			noobMinionBehavior()
+		}
+		if(everyinterval(800)){
+			spawnMinions();
+		}
+	}
+	else{
+		timeUntilGone += 1;
+		noobBoss.x = 750-noobBoss.width/2;
+		noobBoss.y = 400-noobBoss.height/2;
+		if(timeUntilGone >= 200){
 
-	myGameArea.frameNo += 1;
-	followPlayer(noobBoss, player, 2);
-	collisionDamage(noobBoss, player, immunityFrame);
-	collisionDamage(spinny,player, immunityFrame2);
-	bulletsDamage(noobBoss, supullets, player.Bitem ? 1.3:1)
-	bulletsDamage(spinny, supullets, 0);
-	if(minion!== null){
-		noobMinionBehavior()
+			index = allGameElements.indexOf(noobBoss);
+			if (index > -1) {
+			allGameElements.splice(index, 1);
+			}
+
 	}
-	if(everyinterval(800)){
-		spawnMinions();
+		if(timeUntilGone <= 450){
+			scrollWrapper(260, 100);
+			player.x = 400;
+			player.y = 300;
+		}
+		else if(timeUntilGone > 450){
+			noobPet = new component(40, 40, "assets/The Jackhammer.png", player.x-player.width, player.y+player.height, "image");
+			allGameElements.push(noobPet);
+			circle.radius = 150;
+			player.x = 400;
+			player.y = 300;
+			itemChest = new component(250, 173, "assets/Treasure Chest Closed.png", 750-125, 400-86, "image");
+			allGameElements.push(itemChest);
+      bulletsNumber+=1;
+      spawnOne = false;
+			noobBoss = null;
+		}
+		if(!created){
+			createGif(250, 250);
+			created = true;
+		}
 	}
-}
+	}
+
 var fps = 50;
 function updateGameArea() {
 	        requestAnimationFrame(updateGameArea);
 	        myGameArea.clear();
 
-					circlePath();
 
 
-					noobBossBehavior();
 					if(player.x >= 400){
 	        scrollX = player.x - 400;
 	      }
@@ -1333,8 +1391,17 @@ function updateGameArea() {
 	      }
 	      else{
 	        scrollY = 0;
-	      }
-	     scrollWrapper(scrollX, scrollY);
+				}
+
+			 scrollWrapper(scrollX, scrollY);
+				if(noobPet!==null){
+					circlePath(noobPet)
+				}
+			 if(noobBoss!==null){
+				circlePath(noobBoss);
+
+				noobBossBehavior();
+				}
 	     updateEverything();
 	     dontfuckingwalkthroughwalls();
 	  	 portalBehavior();
