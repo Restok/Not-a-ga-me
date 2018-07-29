@@ -788,7 +788,7 @@ function dash(enemynum){
 		}
 }
 function createEnemy(startX, startY, endX, endY){
-    enemy = new component(200, 147, "assets/stalincat.png", startX, startY, "image");
+    enemy = new component(200, 147, "assets/Stalincat.png", startX, startY, "image");
     enemy.endX = endX;
     enemy.friendly = false;
     enemy.endY = endY;
