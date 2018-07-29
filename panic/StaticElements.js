@@ -67,7 +67,6 @@ heart = new component2(210, 48, "assets/Gucci Gayge Full.png", 20, 20, "image");
 
 function updateBossHealth(badGuy){
 	bossHealth.width -= (bossHealth.width/badGuy.health);
-	console.log(badGuy.health)
 }
 function clearBoard() {
     contx.clearRect(0, 0, canv.width, canv.height);

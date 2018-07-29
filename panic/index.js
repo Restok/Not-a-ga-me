@@ -36,7 +36,7 @@ var petDirection = "left";
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 1;
+var level = 0;
 var portal = null;
 var d1;
 var d2;
@@ -49,7 +49,8 @@ var tempSpeedY;
 var noobMinions = [];
 var minion = null;
 var noobPet = null;
-
+var noobBoss = null;
+var spinny = null;
 function circlePath(following){
 	circle.centerX = following.x + following.width/2;
 	circle.centerY = following.y + following.height/2;
@@ -63,10 +64,12 @@ var ball = {x:0, y:0, speed:0.1};
 
 function startGame() {
 
-    myGameArea.start();
+		myGameArea.start();
+		portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
+		allGameElements.push(portal);
     player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
     // createEnemy(650, 300, 650, 500);
-		createNoobBoss();
+		// createNoobBoss();
 		requestAnimationFrame(updateGameArea);
 		
   	player.health = 6;
@@ -94,17 +97,28 @@ function createNoobBoss(){
 
 }
 function setLevel(){
+
   switch(level){
     case 0:
        removeFromAll(portal);
        portal = null;
-       createEnemy(650, 300, 650, 500);
-       level += 1;
        supullets = [];
 			 bossHealth = new component2(494, 3, "green", 150, 450, "a");
-
-
-       break;
+			 createPopUp("assets/BIGNIBBA.jpg", "cutScene");
+			 $('#close').on("click", function(){
+				$('#close').hide();
+				$('#setting').fadeOut(1000, function(){
+					created = false;
+					createEnemy(650, 300, 650, 500);
+					console.log(level)
+					player.x = 100;
+					player.y = 100;
+					$("#close").remove();
+					$("#setting").remove();
+					level += 1;
+				})
+		})
+    break;
 		case 1:
 			immunityFrame.frame = 0;
 			immunityFrame2.frame = 0;
@@ -113,23 +127,54 @@ function setLevel(){
        removeFromAll(itemChest);
        portal = null;
        itemChest = null;
-       bossHealth = new component2(494, 3, "green", 150, 450, "a");
-       createPopUp("assets/BIGNIBBA.jpg", "cutScene");
-       player.x = 100;
-       player.y = 100;
-       $('#close').on("click", function(){
-          $('#close').hide();
-          $('#setting').fadeOut(1000, function(){
-            created = false;
-            createEnemy2(750, 300);
-            player.x = 100;
-            player.y = 100;
-            level += 1;
-          })
-       })
-        break;
-  }
-}
+			 bossHealth = new component2(494, 3, "green", 150, 450, "a");
+			console.log("NOTICEME")
+			 createPopUp("assets/BIGNIBBA.jpg", "cutScene");
+			 $('#close').on("click", function(){
+				$('#close').hide();
+				$('#setting').fadeOut(1000, function(){
+					console.log(level)
+					created = false;
+					createEnemy2(750, 300);
+					player.x = 100;
+					player.y = 100;
+					level += 1;
+					$("#close").remove();
+					$("#setting").remove();
+				})
+		})
+				break;
+			case 2:
+				immunityFrame.frame = 0;
+				immunityFrame2.frame = 0;
+				 supullets = [];
+				 removeFromAll(portal);
+				 removeFromAll(itemChest);
+				 portal = null;
+				 itemChest = null;
+				 bossHealth = new component2(494, 3, "green", 150, 450, "a");
+				 createPopUp("assets/BIGNIBBA.jpg", "cutScene");
+				 $('#close').on("click", function(){
+
+				 $('#close').hide();
+				 $('#setting').fadeOut(1000, function(){
+					console.log(level)
+
+					 created = false;
+					createNoobBoss();
+					 player.x = 100;
+					 player.y = 100;
+					 level += 1;
+					 $("#close").remove();
+					 $("#setting").remove();
+				 })
+				})
+
+				
+					break;
+		}
+
+	}
 function correspondItem(){
 	switch(itemChosen){
 		case 0:
@@ -289,7 +334,6 @@ function bulletsDamage(subject, damager, damage){
 			}
 			else if(subject.isBoss){
 				updateBossHealth(subject);
-				console.log("set")
 			}
 		}
 	}
@@ -618,7 +662,7 @@ function bounce(subject){
 
 	  }
 	  if(subject.x >= 1500 - subject.width){
-		subject.y = 1499-subject.height;
+		subject.y = 1499-subject.width;
 		subject.speedX*= -1;
 	  }
 	}
@@ -1239,48 +1283,6 @@ function boss1Behavior(){
 
 var timeUntilGone = 0;
 var index;
-
-function updateEverything(){
-
-	for(var x = 0; x< allGameElements.length; x++){
-        allGameElements[x].newPos();
-        allGameElements[x].update();
-    }
-	boss2PetBehavior(petDirection);
-	noobPetBehavior(petDirection);
-
-    disappearWhenTouchingWall(enemyBullets)
-    for (i = 0; i < enemyBullets.length; i += 1) {
-        enemyBullets[i].newPos();
-        enemyBullets[i].update();
-    }
-    disappearWhenTouchingWall(enemyBulletSpiral)
-    for (i = 0; i < enemyBulletSpiral.length; i += 1) {
-        enemyBulletSpiral[i].newPos();
-        enemyBulletSpiral[i].update();
-    }
-    disappearWhenTouchingWall(supullets);
-	    trackEnemy(enemy, supullets)
-
-    for (i = 0; i < supullets.length; i += 1) {
-        supullets[i].newPos();
-        supullets[i].update();
-
-
-		}
-		for(x = 0; x < noobMinions.length; x++){
-
-			noobMinions[x].newPos();
-			noobMinions[x].update();
-	}
-   disappearWhenTouchingWall(sprayBulletsArray);
-
-    for (i = 0; i < sprayBulletsArray.length; i += 1) {
-        sprayBulletsArray[i].newPos();
-        sprayBulletsArray[i].update();
-    }
-}
-
 function collisionDamage(enemyName, target, frameVar){
 	if(enemyName.crashWith(target)){
 		immunity((enemyName == spinny ? 4:100), frameVar);
@@ -1321,6 +1323,7 @@ function spawnMinions(){
 		}
 } 
 noobBossIsAlive = true;
+
 function noobBossBehavior(){
 	if(noobBossIsAlive){
 		myGameArea.frameNo += 1;
@@ -1373,13 +1376,57 @@ function noobBossBehavior(){
 	}
 	}
 
+function updateEverything(){
+
+	for(var x = 0; x< allGameElements.length; x++){
+        allGameElements[x].newPos();
+        allGameElements[x].update();
+    }
+	boss2PetBehavior(petDirection);
+	noobPetBehavior(petDirection);
+		if(level == 1){
+    disappearWhenTouchingWall(enemyBullets)
+    for (i = 0; i < enemyBullets.length; i += 1) {
+        enemyBullets[i].newPos();
+        enemyBullets[i].update();
+    }
+    disappearWhenTouchingWall(enemyBulletSpiral)
+    for (i = 0; i < enemyBulletSpiral.length; i += 1) {
+        enemyBulletSpiral[i].newPos();
+        enemyBulletSpiral[i].update();
+		}
+	}
+    disappearWhenTouchingWall(supullets);
+	    // trackEnemy(enemy, supullets)
+
+    for (i = 0; i < supullets.length; i += 1) {
+        supullets[i].newPos();
+        supullets[i].update();
+
+
+		}
+		if(level == 3){
+			for(x = 0; x < noobMinions.length; x++){
+
+				noobMinions[x].newPos();
+				noobMinions[x].update();
+		}
+}
+	if(level == 2){
+
+			disappearWhenTouchingWall(sprayBulletsArray);
+
+				for (i = 0; i < sprayBulletsArray.length; i += 1) {
+						sprayBulletsArray[i].newPos();
+						sprayBulletsArray[i].update();
+				}
+		}
+	}
+
 var fps = 50;
 function updateGameArea() {
 	        requestAnimationFrame(updateGameArea);
-	        myGameArea.clear();
-
-
-
+	      myGameArea.clear();
 					if(player.x >= 400){
 	        scrollX = player.x - 400;
 	      }
