@@ -32,11 +32,11 @@ var b2Bullets;
 var itemChest = null;
 var getPreviousPlayerPos = false;
 var petDirection = "left";
-
+var mimicBullets = [];
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 0;
+var level = 2;
 var portal = null;
 var d1;
 var d2;
@@ -51,6 +51,7 @@ var minion = null;
 var noobPet = null;
 var noobBoss = null;
 var spinny = null;
+var mimicBullets = [];
 function circlePath(following){
 	circle.centerX = following.x + following.width/2;
 	circle.centerY = following.y + following.height/2;
@@ -65,9 +66,10 @@ var ball = {x:0, y:0, speed:0.1};
 function startGame() {
 
 		myGameArea.start();
-		portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
-		allGameElements.push(portal);
-    player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
+		// portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
+		player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
+		itemChest = new component(250, 173, "assets/Treasure Chest Closed.png", 750-125, 400-86, "image");
+		allGameElements.push(itemChest);
     // createEnemy(650, 300, 650, 500);
 		// createNoobBoss();
 		requestAnimationFrame(updateGameArea);
@@ -344,11 +346,169 @@ function bulletsDamage(subject, damager, damage){
 //		sprayBulletsArray = [];
 //	}
 //}
+var mimic = null;
 var atkIndex2;
 var trueRandom;
 var centerOnce = false;
 var prevPlayerX = 0;
 var prevPlayerY = 0;
+var createMimic = true;
+var burstControl = 0;
+var spiral1Toggle = true;
+var spiral2Toggle = false;
+var spiral3Toggle = false;
+var spiral4Toggle = false;
+var circleFireCtrl = 0;
+var itemProp = {width: 0, height:0}
+var itemSrcArray = ["assets/Subreme Powerup Pickup.png", "assets/Ravin' Robo Boy.png", "assets/Wack Ass Cryptocurrency.png", "assets/Portrait of Your Mom.png"]
+function defineItemWidth(iDex){
+	switch(iDex){
+		case 0:
+			itemProp.width = 20;
+			itemProp.height = 19;
+			break;	
+		case 1:
+			itemProp.width = 30;
+			itemProp.height = 17;
+			break;
+		case 2:
+			itemProp.width = 	25;
+			itemProp.height = 12;
+			break;
+		case 3:
+			itemProp.width = 20;
+			itemProp.height = 29;
+			break;
+		}
+}
+function circleFire(enemynum){
+	circleFireCtrl+=1;
+	if(circleFireCtrl % 100 ==0){
+	for(var cc = 0; cc< 25; cc++){
+			var randomItemIndex = Math.floor(Math.random()*itemSrcArray.length);
+			defineItemWidth(randomItemIndex);
+			EBS = new component(itemProp.width, itemProp.height, itemSrcArray[randomItemIndex], enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/2, "image");
+			EBS.speedY = spiralSpeedY;
+			EBS.speedX = spiralSpeedX;
+			if(spiral1Toggle){
+				spiralSpeedY-=1;
+				spiralSpeedX+=1;
+			}
+			else if(spiral2Toggle){
+				spiralSpeedX -= 1;
+				spiralSpeedY -=1;
+	
+			}
+			else if(spiral3Toggle){
+				spiralSpeedX -= 1;
+				spiralSpeedY += 1;
+			}
+			else if(spiral4Toggle){
+				spiralSpeedX += 1;
+				spiralSpeedY +=1;
+			}
+			if(spiralSpeedX == 5){
+				spiral1Toggle = false;
+				spiral2Toggle = true;
+	
+			}
+			if(spiralSpeedY == -5){
+				spiral2Toggle = false;
+				spiral3Toggle = true;
+	
+			}
+			if(spiralSpeedX == -5){
+				spiral3Toggle = false;
+				spiral4Toggle = true;
+			}
+			if(spiralSpeedY== 5){
+				spiral4Toggle = false;
+				spiral1Toggle = true;
+			}
+			mimicBullets.push(EBS);
+	}
+}
+}
+
+function burstFire(enemynum){
+	enemynum.speedX = 0;
+	enemynum.speedY = 0;
+	burstControl+=1;
+	if( burstControl > 100 && burstControl%10 == 0){
+		console.log("firing")
+	enemyBullet = new component(10, 10, "red", enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/2, "a");
+	enemyBullet2 = new component(10, 10, "red", enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/2, "a");
+	enemyBullet3 = new component(10, 10, "red", enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/2, "a");
+
+	enemyBullet.friendly = false;
+		if(burstControl>250){
+			burstControl = 1;
+		}
+//	TAKES THE DIFFERENCE BETWEEN ENEMY AND PLAYER
+
+    var ydif = (player.y+player.height/2) - enemynum.y-enemynum.height/2;
+    var xdif = (player.x+player.width/2) - enemynum.x -enemynum.width/2;
+
+//	MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
+//	THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
+
+	if(ydif<=0 && xdif>=0){
+      var multiplier = (xdif*-1 + ydif)/8;
+    }
+  else if (ydif>=0 && xdif<=0){
+      var multiplier = (xdif+ydif*-1)/8;
+    }
+  else{
+      var multiplier = (xdif+ydif)/8;
+    }
+
+   if(ydif <= 0 && xdif>=0){
+      enemyBullet.speedX = (-xdif/multiplier);
+      enemyBullet.speedY = (-ydif/multiplier);
+    }
+    else if(xdif<=0 && ydif<=0){
+      enemyBullet.speedX = (-xdif/multiplier);
+      enemyBullet.speedY = (-ydif/multiplier);
+    }
+    else if(ydif>=0 && xdif <=0){
+      enemyBullet.speedX = (-xdif/multiplier);
+      enemyBullet.speedY = (-ydif/multiplier);
+    }
+    else if(ydif>=0 && xdif >=0){
+        enemyBullet.speedX = (xdif/multiplier);
+        enemyBullet.speedY = (ydif/multiplier);
+    }
+    else if (ydif = 0){
+      enemyBullet.speedX = (-xdif/multiplier);
+      enemyBullet.speedY = (ydif/multiplier);
+    }
+
+    else{
+      enemyBullet.speedX = (-xdif/multiplier);
+      enemyBullet.speedY = (-ydif/multiplier);
+		}
+			enemyBullet2.speedX = enemyBullet.speedX + 2
+			enemyBullet2.speedY = enemyBullet.speedY - 2
+			enemyBullet2.speedX = enemyBullet.speedX + 2
+			enemyBullet2.speedY = enemyBullet.speedY - 2
+			enemyBullet3.speedX = enemyBullet.speedX - 2
+			enemyBullet3.speedY = enemyBullet.speedY + 2
+			mimicBullets.push(enemyBullet);
+      mimicBullets.push(enemyBullet2);
+
+      mimicBullets.push(enemyBullet3);
+		}
+}
+function mimicBehavior(){
+	circleFire(mimic)
+//  burstFire(mimic);
+}
+function spawnMimic(){
+	removeFromAll(itemChest)
+	itemChest = null;
+	mimic = new component(534, 200, "assets/mimic.png", 750-231, 400-86, "image");
+	allGameElements.push(mimic);
+}
 function dontfuckingwalkonchests(){
   if(itemChest !== null){
 	if(player.crashWith(itemChest)){
@@ -360,6 +520,10 @@ function dontfuckingwalkonchests(){
 
 		}
 		else{
+			if(createMimic){
+				spawnMimic();
+			}
+			else{
   		itemChest.image.src = "assets/Treasure Chest Opened.png";
 
 
@@ -371,7 +535,7 @@ function dontfuckingwalkonchests(){
   		player.y = prevPlayerY;
 		  spawnItems();
       itemMoveOutOfChest(correspondItem());
-    
+			}
   }
 	}
 	else{
@@ -817,10 +981,6 @@ function roundTo(n, digits) {
     return n;
 }
 
-var spiral1Toggle = true;
-var spiral2Toggle = false;
-var spiral3Toggle = false;
-var spiral4Toggle = false;
 
 function enemyFireSpiral(enemynum){
   if(spirCtrl % 5 == 0){
@@ -886,9 +1046,9 @@ function everyinterval(n) {
 
 function enemyFire(enemynum){
     if(fireCtrl%20 == 0){
-    enemyBullet = new component(10, 10, "red", enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/1.7, "a");
+			enemyBullet = new component(10, 10, "red", enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/1.7, "a");
 
-    enemyBullet.friendly = false;
+			enemyBullet.friendly = false;
 		
 //	TAKES THE DIFFERENCE BETWEEN ENEMY AND PLAYER
 
@@ -1384,8 +1544,9 @@ function updateEverything(){
     }
 	boss2PetBehavior(petDirection);
 	noobPetBehavior(petDirection);
+	disappearWhenTouchingWall(enemyBullets)
+
 		if(level == 1){
-    disappearWhenTouchingWall(enemyBullets)
     for (i = 0; i < enemyBullets.length; i += 1) {
         enemyBullets[i].newPos();
         enemyBullets[i].update();
@@ -1402,9 +1563,11 @@ function updateEverything(){
     for (i = 0; i < supullets.length; i += 1) {
         supullets[i].newPos();
         supullets[i].update();
-
-
 		}
+		for (var b = 0; b < mimicBullets.length; b += 1) {
+			mimicBullets[b].newPos();
+			mimicBullets[b].update();
+	}
 		if(level == 3){
 			for(x = 0; x < noobMinions.length; x++){
 
@@ -1462,7 +1625,9 @@ function updateGameArea() {
 		if(boss2!== null){
 	     boss2Behavior();
 		}
-	 
+		if(mimic!== null){
+			mimicBehavior();
+	 }
 
 		getItem(correspondItem());
 	}
