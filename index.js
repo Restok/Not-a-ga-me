@@ -407,11 +407,12 @@ function circleFire(enemynum){
 				spiralSpeedX += 1;
 				spiralSpeedY +=1;
 			}
+
 			if(spiralSpeedX == 5){
 				spiral1Toggle = false;
 				spiral2Toggle = true;
-	
 			}
+
 			if(spiralSpeedY == -5){
 				spiral2Toggle = false;
 				spiral3Toggle = true;
@@ -429,6 +430,7 @@ function circleFire(enemynum){
 	}
 }
 }
+var burstTimes = 0;
 
 function burstFire(enemynum){
 	enemynum.speedX = 0;
@@ -443,6 +445,7 @@ function burstFire(enemynum){
 	enemyBullet.friendly = false;
 		if(burstControl>250){
 			burstControl = 1;
+			burstTimes += 1;
 		}
 //	TAKES THE DIFFERENCE BETWEEN ENEMY AND PLAYER
 
@@ -499,14 +502,66 @@ function burstFire(enemynum){
       mimicBullets.push(enemyBullet3);
 		}
 }
+var mimicAttacks = [0, 1];
+var mimicAttackIndex = -1;
+var chooseAttackInterval = 0;
+var mimicAttacking = false;
+var followInterval = 0;
+var mimicIsAlive = true
 function mimicBehavior(){
-	circleFire(mimic)
+	if(mimicIsAlive){
+		bulletsDamage(player, mimicBullets, 1)
+		bulletsDamage(mimic, supullets , 1)
+		if(!mimicAttacking){
+			followInterval+=1;
+			chooseAttackInterval +=1;
+			if(followInterval<150){
+				followPlayer(mimic, player, 2)
+			}
+			else{
+				mimic.speedX = 0;
+				mimic.speedY = 0;
+				if(followInterval > 300){
+					followInterval = 0;
+				}
+			}
+
+			if(chooseAttackInterval%600==0){
+					mimicAttackIndex = Math.floor(Math.random()*2)
+					mimicAttacking=true;
+			}
+		}
+		else{
+			mimic.speedX = 0;
+			mimic.speedY = 0;
+			if(mimicAttacks[mimicAttackIndex] == 0){
+				burstFire(mimic);
+				if(burstTimes >= 5){
+					mimicAttacking = false;
+					burstTimes =0;
+					burstControl = 0;
+					followInterval = 0;
+				}
+			}		
+			else if (mimicAttacks[mimicAttackIndex] == 1){
+				circleFire(mimic);
+				if(circleFireCtrl >= 400){
+					mimicAttacking = false;
+					circleFireCtrl = 0;
+					followInterval= 0;
+				}
+			}
+		}
 //  burstFire(mimic);
+	}
 }
 function spawnMimic(){
 	removeFromAll(itemChest)
 	itemChest = null;
 	mimic = new component(534, 200, "assets/mimic.png", 750-231, 400-86, "image");
+	mimic.friendly = false;
+	mimic.isBoss = true;
+	mimic.health = bulletsNumber*300;
 	allGameElements.push(mimic);
 }
 function dontfuckingwalkonchests(){
@@ -1568,6 +1623,8 @@ function updateEverything(){
 			mimicBullets[b].newPos();
 			mimicBullets[b].update();
 	}
+	disappearWhenTouchingWall(mimicBullets);
+
 		if(level == 3){
 			for(x = 0; x < noobMinions.length; x++){
 
@@ -1575,6 +1632,7 @@ function updateEverything(){
 				noobMinions[x].update();
 		}
 }
+
 	if(level == 2){
 
 			disappearWhenTouchingWall(sprayBulletsArray);
