@@ -36,7 +36,7 @@ var mimicBullets = [];
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 2;
+var level = 0;
 var portal = null;
 var d1;
 var d2;
@@ -66,9 +66,11 @@ var ball = {x:0, y:0, speed:0.1};
 function startGame() {
 
 		myGameArea.start();
+		createGif(0,0,"");
 		// portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
-		player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
 		itemChest = new component(250, 173, "assets/Treasure Chest Closed.png", 750-125, 400-86, "image");
+		createMimic = true;
+		player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
 		allGameElements.push(itemChest);
     // createEnemy(650, 300, 650, 500);
 		// createNoobBoss();
@@ -212,7 +214,7 @@ function spawnItems(){
 				allGameElements.push(dmg);
 				break;
 			case 1:
-				mspd = new component(70, 70, "assets/Ravin' Robo Boy.png", 725, 450, "image");
+				mspd = new component(60, 32.4, "assets/Ravin' Robo Boy.png", 725, 450, "image");
 				allGameElements.push(mspd);
 				break;
 		}
@@ -271,7 +273,7 @@ function createEnemy2(x, y){
 	created = false;
 	boss2 = new component(180, 207, "assets/Boss 2 (Medicated Mushroom).png", x, y, "image");
 	boss2.friendly = false;
-	boss2.health = 500;
+	boss2.health = 300;
 	boss2.isBoss = true;
 	timeUntilGone = 0;
 	allGameElements.push(boss2);
@@ -352,7 +354,7 @@ var trueRandom;
 var centerOnce = false;
 var prevPlayerX = 0;
 var prevPlayerY = 0;
-var createMimic = true;
+var createMimic = false;
 var burstControl = 0;
 var spiral1Toggle = true;
 var spiral2Toggle = false;
@@ -436,14 +438,13 @@ function burstFire(enemynum){
 	enemynum.speedX = 0;
 	enemynum.speedY = 0;
 	burstControl+=1;
-	if( burstControl > 100 && burstControl%10 == 0){
-		console.log("firing")
+	if( burstControl > 70 && burstControl%5 == 0){
 	enemyBullet = new component(10, 10, "red", enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/2, "a");
 	enemyBullet2 = new component(10, 10, "red", enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/2, "a");
 	enemyBullet3 = new component(10, 10, "red", enemynum.x+enemynum.width/2, enemynum.y+enemynum.height/2, "a");
 
 	enemyBullet.friendly = false;
-		if(burstControl>250){
+		if(burstControl>120){
 			burstControl = 1;
 			burstTimes += 1;
 		}
@@ -490,8 +491,7 @@ function burstFire(enemynum){
       enemyBullet.speedX = (-xdif/multiplier);
       enemyBullet.speedY = (-ydif/multiplier);
 		}
-			enemyBullet2.speedX = enemyBullet.speedX + 2
-			enemyBullet2.speedY = enemyBullet.speedY - 2
+
 			enemyBullet2.speedX = enemyBullet.speedX + 2
 			enemyBullet2.speedY = enemyBullet.speedY - 2
 			enemyBullet3.speedX = enemyBullet.speedX - 2
@@ -507,26 +507,29 @@ var mimicAttackIndex = -1;
 var chooseAttackInterval = 0;
 var mimicAttacking = false;
 var followInterval = 0;
-var mimicIsAlive = true
+var mimicIsAlive = true;
+var mimicPet = null;
+
 function mimicBehavior(){
+	mimic.health <= 0 ? mimicIsAlive=false:mimicIsAlive=true; 
 	if(mimicIsAlive){
 		bulletsDamage(player, mimicBullets, 1)
 		bulletsDamage(mimic, supullets , 1)
 		if(!mimicAttacking){
 			followInterval+=1;
 			chooseAttackInterval +=1;
-			if(followInterval<150){
+			if(followInterval<70){
 				followPlayer(mimic, player, 2)
 			}
 			else{
 				mimic.speedX = 0;
 				mimic.speedY = 0;
-				if(followInterval > 300){
+				if(followInterval > 250){
 					followInterval = 0;
 				}
 			}
 
-			if(chooseAttackInterval%600==0){
+			if(chooseAttackInterval%400==0){
 					mimicAttackIndex = Math.floor(Math.random()*2)
 					mimicAttacking=true;
 			}
@@ -554,14 +557,19 @@ function mimicBehavior(){
 		}
 //  burstFire(mimic);
 	}
+		else{
+			universalBossDeath(mimic,true,mimicPet,65,24,"assets/mimic.png");
+		}
 }
 function spawnMimic(){
+	bossHealth = new component2(494, 3, "green", 150, 450, "a");
+
 	removeFromAll(itemChest)
 	itemChest = null;
 	mimic = new component(534, 200, "assets/mimic.png", 750-231, 400-86, "image");
 	mimic.friendly = false;
 	mimic.isBoss = true;
-	mimic.health = bulletsNumber*300;
+	mimic.health = bulletsNumber*150;
 	allGameElements.push(mimic);
 }
 function dontfuckingwalkonchests(){
@@ -1427,7 +1435,7 @@ function boss1Behavior(){
         Boss1Action = 0;
 		centerBossY();
 
-		if(timeUntilGone >= 170){
+		if(timeUntilGone >= 200){
 			index = allGameElements.indexOf(enemy);
 			if (index > -1) {
 		  	allGameElements.splice(index, 1);
@@ -1556,6 +1564,7 @@ function noobBossBehavior(){
 		}
 	}
 	else{
+		createMimic = true;
 		timeUntilGone += 1;
 		noobBoss.x = 750-noobBoss.width/2;
 		noobBoss.y = 400-noobBoss.height/2;
