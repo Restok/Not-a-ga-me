@@ -1290,7 +1290,7 @@ function shoot() {
     }
     if (mimicPet !== null) {
         mpBullets = new component(10, 10, "red", mimicPet.x, mimicPet.y + 10);
-        mpBullets.push(mpBullets);
+        supullets.push(mpBullets);
         setSpeedArray.push(mpBullets);
     }
 }
