@@ -8,19 +8,26 @@
     <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
 
   </head>
-  <body onload = "startGame()">
+  <body>
 
-  	<div id = "popUpParent" class = "popups"></div>
-    <canvas width = "800" height = "500" style = "background:transparent; position: absolute; z-index: 5" id = "staticElements"></canvas>
+    
+    <canvas width = "800" height = "500" style = "background:transparent; position: absolute; z-index: 5;opacity:0;" id = "staticElements"></canvas>
 	
 
-    <div id = "wrapper" style = "width: 800px; height:500px; overflow: hidden; position: absolute;">
+    <div id = "wrapper" style = "width: 800px; height:500px; overflow: hidden;">
+
 			<br>
+
     	  <span id="childElement"></span>
+
 	
     </div>
 
+    <div id = "popUpParent" class = "popups"></div>
 
+        <button class = "someButton">
+          START GAME
+      </button>
 <script>
 
 </script>
@@ -29,7 +36,14 @@
 
     <script src="index.js"></script>
     <script src="staticElements.js"></script>
+    <script>
+      $('.someButton').on('click', function(){
+        $('.someButton').hide();
 
+        startGame();
+      })
+
+    </script>
 
 
     </body>

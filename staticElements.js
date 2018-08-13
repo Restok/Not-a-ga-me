@@ -1,4 +1,4 @@
-var canv = document.getElementById("staticElements")
+var canv = document.getElementById("staticElements");
 var contx = canv.getContext("2d");
 
 class component2{
@@ -100,6 +100,7 @@ function updatehearts(){
 	clearBoard();
 	heart.update();
 	bossHealth.update();
+  requestAnimationFrame(updatehearts)
 
 }
-setInterval(updatehearts, 20);
+requestAnimationFrame(updatehearts, 20);

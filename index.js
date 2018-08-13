@@ -75,23 +75,22 @@ var ball = {
 }
 
 function startGame() {
-
     myGameArea.start();
     createGif(0, 0, "");
     portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
-
     player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
     allGameElements.push(portal);
+    document.getElementById("staticElements").style.opacity = 1;
     // createEnemy(650, 300, 650, 500);
     // createNoobBoss();
     player.health = 6;
     player.friendly = true;
     allGameElements.push(player);
     requestAnimationFrame(updateGameArea);
-
-
-
 }
+
+
+
 var levelChanged = false;
 
 function removeFromAll(removed) {
@@ -254,6 +253,7 @@ function resetGif(w, h) {
 }
 
 function createGif(w, h, alt) {
+	var pParent = document.getElementById("popUpParent");
     var x = document.createElement("IMG");
     x.setAttribute("src", "assets/death/death.gif");
     x.setAttribute("width", w);
@@ -261,7 +261,7 @@ function createGif(w, h, alt) {
     x.setAttribute("alt", alt);
     x.setAttribute("class", "ddeath");
     x.setAttribute("id", "dddeath");
-    document.body.appendChild(x);
+    pParent.appendChild(x);
 }
 //var sup1 = new SuperGif({ gif: document.getElementById('example1') } );
 //sup1.load();
@@ -1381,6 +1381,7 @@ function boss1Behavior() {
             //        sup1.play();
         }
     }
+    if(enemyIsAlive){
     if (Boss1Action == 1) {
         enemyBulletSpiral = [];
         attacking = true;
@@ -1409,15 +1410,14 @@ function boss1Behavior() {
         var indexnum = Math.floor(roundTo(Math.random()))
         Boss1Action = Boss1Atk[indexnum]
     }
-    if (enemyIsAlive) {
-        if (player.Bitem == false) {
-            bulletsDamage(enemy, supullets, 1)
-        } else {
-            bulletsDamage(enemy, supullets, 1.3)
+    if (player.Bitem == false) {
+        bulletsDamage(enemy, supullets, 1)
+    } else {
+        bulletsDamage(enemy, supullets, 1.3)
 
-        }
-        bulletsDamage(player, enemyBullets, 1)
-        bulletsDamage(player, enemyBulletSpiral, 1)
+    }
+    bulletsDamage(player, enemyBullets, 1)
+    bulletsDamage(player, enemyBulletSpiral, 1)
     }
 }
 
@@ -1673,7 +1673,7 @@ window.onkeydown = function(e) {
         direction = 3;
         movedown();
     }
-    if (key == "89" || key == "72" || key == "71" || key == "74") {
+    if (key == "37" || key == "38" || key == "39" || key == "40") {
         player.image.src = "assets/Player Sprite Dab Red Eyes.png";
     }
 
@@ -1714,7 +1714,7 @@ window.onkeyup = function(e) {
     } else if (key == '83') {
         player.speedY = 0;
     }
-    if (key == '89') {
+    if (key == '38') {
         shoot();
         setAllBulletSpeedY(-bulletsSpeed);
 
@@ -1724,7 +1724,7 @@ window.onkeyup = function(e) {
         //    supullet.speedY = -bulletsSpeed;
         player.image.src = "assets/Player Sprite.png"
     }
-    if (key == "72") {
+    if (key == "40") {
         shoot();
         setAllBulletSpeedY(bulletsSpeed);
         // if(boss2Pet!=null){
@@ -1734,7 +1734,7 @@ window.onkeyup = function(e) {
         player.image.src = "assets/Player Sprite.png"
 
     }
-    if (key == "71") {
+    if (key == "37") {
         shoot();
         setAllBulletSpeedX(-bulletsSpeed);
 
@@ -1744,7 +1744,7 @@ window.onkeyup = function(e) {
         //    supullet.speedX = -bulletsSpeed;
         player.image.src = "assets/Player Spritefl.png"
     }
-    if (key == "74") {
+    if (key == "39") {
         shoot();
         setAllBulletSpeedX(bulletsSpeed);
 
