@@ -54,19 +54,86 @@ var noobBoss = null;
 var spinny = null;
 var mimicBullets = [];
 var waitToLoad = [];
+var i;
 
-var pleaseLoadMeFirstBeforeYouStartPlaying = new Image(70, 58.45);
-pleaseLoadMeFirstBeforeYouStartPlaying.src = "assets/Player Sprite Dab Red Eyes.png";
+var sources = {
+    WackAssCryptocurrency:'assets/Wack Ass Cryptocurrency.png',
+    BIGNIBBA:'assets/BIGNIBBA.jpg',
+    Boss2MedicatedMushroomchargeup:'assets/Boss 2 (Medicated Mushroom) charge up.png',
+    Boss2MedicatedMushroomjump:'assets/Boss 2 (Medicated Mushroom) jump.png',
+    Boss2MedicatedMushroom:'assets/Boss 2 (Medicated Mushroom).png',
+    BossHealthBarMK69VirginDefenseSystem:'assets/Boss Health Bar (MK69 Virgin Defense System).png',
+    BossHealthBarNonspecific:'assets/Boss Health Bar (Non-specific).png',
+    DeadGayge:'assets/Dead Gayge.png',
+    DoorClosed:'assets/Door (Closed).png',
+    DoorOpened:'assets/Door (Opened).png',
+    EarthFragment01:'assets/Earth Fragment 01.png',
+    EarthFragment02:'assets/Earth Fragment 02.png',
+    EarthFragment03:'assets/Earth Fragment 03.png',
+    EarthFragment04:'assets/Earth Fragment 04.png',
+    EnemyProjectile01:'assets/Enemy Projectile 01.png',
+    EnemyProjectile02:'assets/Enemy Projectile 02.png',
+    FinalBossTheEasterBunny:'assets/Final Boss (The Easter Bunny).png',
+    FinalFINALBossMK69VirginDefenseSystemFiring:'assets/Final FINAL Boss (MK69 Virgin Defense System) (Firing).png',
+    FinalFINALBossMK69VirginDefenseSystemNotFiring:'assets/Final FINAL Boss (MK69 Virgin Defense System) (Not Firing).png',
+    FinalBoss:'assets/FinalBoss.png',
+    GoButtonCloseButton:'assets/Go Button (Close Button).png',
+    grungeBG:'assets/grungeBG.png',
+    GucciGayge1_6:'assets/Gucci Gayge 1_6.png',
+    GucciGayge2_6:'assets/Gucci Gayge 2_6.png',
+    GucciGayge3_62:'assets/Gucci Gayge 3_6 (2).png',
+    GucciGayge3_6:'assets/Gucci Gayge 3_6.png',
+    GucciGayge4_6:'assets/Gucci Gayge 4_6.png',
+    GucciGayge5_6:'assets/Gucci Gayge 5_6.png',
+    GucciGaygeFull:'assets/Gucci Gayge Full.png',
+    ItemAcquired:'assets/ItemAcquired.png',
+    LilMush:'assets/Lil Mush.png',
+    MedicatedMushroomBackground:'assets/Medicated Mushroom Background.png',
+    mimic:'assets/mimic.png',
+    PlayerSpriteDabRedEyes:'assets/Player Sprite Dab Red Eyes.png',
+    PlayerSpriteDabRedEyesfl:'assets/Player Sprite Dab Red Eyesfl.png',
+    PlayerSpriteDab:'assets/Player Sprite Dab.png',
+    PlayerSprite:'assets/Player Sprite.png',
+    PlayerSpritefl:'assets/Player Spritefl.png',
+    PortraitofYourMom:'assets/Portrait of Your Mom.png',
+    RavinRoboBoy:'assets/Ravin Robo Boy.png',
+    RoboBoyBullet:'assets/Robo Boy Bullet.png',
+    stalincatCopy:'assets/stalincat - Copy.png',
+    stalincat:'assets/stalincat.png',
+    SubremeAmmo:'assets/Subreme Ammo.png',
+    SubremePowerupPickup:'assets/Subreme Powerup Pickup.png',
+    SupremeAmmo:'assets/Supreme Ammo.png',
+    TheJackhammer:'assets/The Jackhammer.png',
+    TreasureChestClosed:'assets/Treasure Chest Closed.png',
+    TreasureChestOpened:'assets/Treasure Chest Opened.png',
+    TreasureChest:'assets/Treasure Chest.png',
+    WackAssCryptocurrencyBullet:'assets/Wack Ass Cryptocurrency Bullet.png'
+}
+var loading = "";
+var images = {};
 
-var pleaseLoadMeFirstBeforeYouStartPlaying2 = new Image(70, 58.45);
-pleaseLoadMeFirstBeforeYouStartPlaying2.src = "assets/Player Sprite.png";
+function loadImages(sources, callback) {
 
-var pleaseLoadMeFirstBeforeYouStartPlaying3 = new Image(70, 58.45);
-pleaseLoadMeFirstBeforeYouStartPlaying3.src = "assets/Player Spritefl.png";
+    var loadedImages = 0;
+    var numImages = 0;
+    // get num of sources
+    for(var src in sources) {
+      numImages++;
+    }
+    for(var src in sources) {
+      images[src] = new Image();
+      loading = images[src];
+      images[src].onload = function() {
+        if(++loadedImages >= numImages) {
+          callback();
 
-waitToLoad.push(pleaseLoadMeFirstBeforeYouStartPlaying);
-waitToLoad.push(pleaseLoadMeFirstBeforeYouStartPlaying2);
-waitToLoad.push(pleaseLoadMeFirstBeforeYouStartPlaying3);
+
+        }
+      }
+      images[src].src = sources[src];
+
+    }
+  }
 
 
 function circlePath(following) {
@@ -88,24 +155,24 @@ var ball = {
     y: 0,
     speed: 0.1
 }
-
+loadImages(sources, function(){
+    startGame();
+})
 function startGame() {
     myGameArea.start();
     createGif(0, 0, "");
-    portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
-    player = new component(70, 58.45, "assets/Player Sprite.png", 450, 200, "image");
+    portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
+    player = new component(70, 58.45, images.PlayerSprite, 450, 200, "image");
     allGameElements.push(portal);
     document.getElementById("staticElements").style.opacity = 1;
-    // createEnemy(650, 300, 650, 500);
-    // createNoobBoss();
+
     player.health = 6;
-    setHealth();
+    allGameElements.push(player);
+    console.log(allGameElements)
 
     player.friendly = true;
-    allGameElements.push(player);
-    pleaseLoadMeFirstBeforeYouStartPlaying.onload = requestAnimationFrame(updateGameArea);
+    requestAnimationFrame(updateGameArea)
 }
-
 
 
 var levelChanged = false;
@@ -119,7 +186,7 @@ function removeFromAll(removed) {
 }
 
 function createNoobBoss() {
-    noobBoss = new component(170, 229, "assets/The Jackhammer.png", 650, 300, "image");
+    noobBoss = new component(170, 229, images.TheJackhammer, 650, 300, "image");
     noobBoss.health = 10;
     noobBoss.isBoss = true;
     noobBoss.friendly = false;
@@ -228,7 +295,7 @@ var itemChosen = -1;
 
 function spawnItems() {
     if (!spawnOne) {
-        portal = new component(90, 127.5, "assets/Door (Closed).png", 950, 400, "image");
+        portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
         allGameElements.push(portal);
         player.x = 550;
         player.y = 400;
@@ -244,11 +311,11 @@ function spawnItems() {
         itemsArray.splice(itemIndex, 1)
         switch (itemChosen) {
             case 0:
-                dmg = new component(50, 50, "assets/Subreme Powerup Pickup.png", 725, 450, "image");
+                dmg = new component(50, 50, images.SubremePowerupPickup, 725, 450, "image");
                 allGameElements.push(dmg);
                 break;
             case 1:
-                mspd = new component(60, 32.4, "assets/Ravin' Robo Boy.png", 725, 450, "image");
+                mspd = new component(60, 32.4, images.RavinRoboBoy, 725, 450, "image");
                 allGameElements.push(mspd);
                 break;
         }
@@ -308,7 +375,7 @@ function scrollWrapper(x, y) {
 
 function createEnemy2(x, y) {
     created = false;
-    boss2 = new component(180, 207, "assets/Boss 2 (Medicated Mushroom).png", x, y, "image");
+    boss2 = new component(180, 207, images.Boss2MedicatedMushroom, x, y, "image");
     boss2.friendly = false;
     boss2.health = 10;
     boss2.isBoss = true;
@@ -404,7 +471,7 @@ var itemProp = {
     width: 0,
     height: 0
 }
-var itemSrcArray = ["assets/Subreme Powerup Pickup.png", "assets/Ravin' Robo Boy.png", "assets/Wack Ass Cryptocurrency.png", "assets/Portrait of Your Mom.png"]
+var itemSrcArray = [images.SubremePowerupPickup, images.RavinRoboBoy, images.WackAssCryptocurrency, images.PortraitofYourMom]
 
 function defineItemWidth(iDex) {
     switch (iDex) {
@@ -593,7 +660,7 @@ function mimicBehavior() {
         if (destroyBoss) {
         	destroyBoss = false;
             mimic = null;
-            mimicPet = new component(65, 24, "assets/mimic.png", player.x - player.width, player.y + player.height, "image");
+            mimicPet = new component(65, 24, images.mimic, player.x - player.width, player.y + player.height, "image");
             allGameElements.push(mimicPet);
             bulletsNumber += 1;
         }
@@ -605,7 +672,7 @@ function spawnMimic() {
 
     removeFromAll(itemChest)
     itemChest = null;
-    mimic = new component(534, 200, "assets/mimic.png", 750 - 231, 400 - 86, "image");
+    mimic = new component(534, 200, images.mimic, 750 - 231, 400 - 86, "image");
     mimic.friendly = false;
     mimic.isBoss = true;
     mimic.health = 1;
@@ -625,7 +692,7 @@ function dontfuckingwalkonchests() {
                 if (createMimic) {
                     spawnMimic();
                 } else {
-                    itemChest.image.src = "assets/Treasure Chest Opened.png";
+                    itemChest.color = images.TreasureChestOpened;
 
 
                     itemChest.height = 263;
@@ -654,7 +721,7 @@ function boss2Behavior() {
         if (destroyBoss) {
         	destroyBoss = false;
             boss2 = null;
-            boss2Pet = new component(40, 44, "assets/Lil' Mush.png", player.x - player.width, player.y + player.height, "image");
+            boss2Pet = new component(40, 44, images.LilMush, player.x - player.width, player.y + player.height, "image");
             allGameElements.push(boss2Pet);
             bulletsNumber += 1;
         }
@@ -712,7 +779,7 @@ function boss2Behavior() {
                         Boss2Action = 0;
                         jumpSetup = false;
                         chargeUp = 0;
-                        boss2.image.src = "assets/Boss 2 (Medicated Mushroom).png"
+                        boss2.color = images.Boss2MedicatedMushroom
                         boss2.width = 180;
                         boss2.height = 207;
 
@@ -738,14 +805,14 @@ function boss2Behavior() {
         }
     }
 }
-var jumpSrcs = ["assets/Earth Fragment 01.png", "assets/Earth Fragment 02.png", "assets/Earth Fragment 03.png", "assets/Earth Fragment 04.png"];
+var jumpSrcs = [images.EarthFragment01,images.EarthFragment02,images.EarthFragment03,images.EarthFragment04];
 var srcIndex = 0;
 
 function jump(subject) {
     if (chargeUp < 60) {
         boss2.speedX = 0;
         boss2.speedY = 0;
-        boss2.image.src = "assets/Boss 2 (Medicated Mushroom) charge up.png";
+        boss2.color = images.Boss2MedicatedMushroomchargeup;
 
     }
     if (chargeUp > 60) {
@@ -759,7 +826,7 @@ function jump(subject) {
             sprayOnce = true;
             goUp = true;
         } else {
-            boss2.image.src = "assets/Boss 2 (Medicated Mushroom) jump.png"
+            boss2.color = images.Boss2MedicatedMushroomjump
 
             if (subject.y > tempBossY - 100 && goUp) {
                 subject.speedY = -4;
@@ -793,7 +860,7 @@ function jump(subject) {
                                 sprayBulletsArray.push(sprayBullets);
 
                             }
-                            boss2.image.src = "assets/Boss 2 (Medicated Mushroom) charge up.png";
+                            boss2.color = images.Boss2MedicatedMushroomchargeup;
 
                             sprayOnce = false;
                         }
@@ -808,7 +875,7 @@ function jump(subject) {
 
 function jumpRage(subject) {
     if (chargeUp < 20) {
-        boss2.image.src = "assets/Boss 2 (Medicated Mushroom) charge up.png";
+        boss2.color = images.Boss2MedicatedMushroomchargeup;
 
     }
     if (chargeUp > 20) {
@@ -821,7 +888,7 @@ function jumpRage(subject) {
             jumpCounter = 0;
             sprayOnce = true;
         } else {
-            boss2.image.src = "assets/Boss 2 (Medicated Mushroom) jump.png"
+            boss2.color = images.Boss2MedicatedMushroomjump
 
             if (subject.y > tempBossY - 100 && goUp) {
                 subject.speedY = -6;
@@ -990,7 +1057,7 @@ function dash(enemynum) {
 }
 
 function createEnemy(startX, startY, endX, endY) {
-    enemy = new component(200, 147, "assets/Stalincat.png", startX, startY, "image");
+    enemy = new component(200, 147, images.stalincat, startX, startY, "image");
     enemy.endX = endX;
     enemy.friendly = false;
     enemy.endY = endY;
@@ -1215,10 +1282,6 @@ class component {
         this.isBoss = false;
         this.color = color;
         this.type = type;
-        if (type == "image") {
-            this.image = new Image();
-            this.image.src = color;
-        }
         this.width = width;
         this.height = height;
         this.speedX = 0;
@@ -1234,16 +1297,16 @@ class component {
         this.Bitem = false;
         this.robot = false;
         this.health = 0;
-        
     }
 
     update() {
         this.ctx.globalCompositeOperation = "destination-over";
         if (this.type == "image") {
-            this.ctx.drawImage(this.image,
+            this.ctx.drawImage(this.color,
                 this.x,
                 this.y,
                 this.width, this.height);
+
         } else {
             this.ctx.fillStyle = this.color;
             this.ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -1282,22 +1345,22 @@ class component {
 }
 
 function shoot() {
-    supullet = new component(50, 50, "assets/Supreme Ammo.png", player.x + (player.width / 2), player.y, "image");
+    supullet = new component(50, 50, images.SupremeAmmo, player.x + (player.width / 2), player.y, "image");
     if (player.Bitem == true) {
-        supullet.image.src = "assets/Subreme Ammo.png"
-        B = new component(20, 20, "assets/Subreme Powerup Pickup.png", player.x + (player.width / 2), player.y + 30, "image")
+        supullet.color = images.SupremeAmmo
+        B = new component(20, 20, images.SubremePowerupPickup, player.x + (player.width / 2), player.y + 30, "image")
         supullets.push(B);
         setSpeedArray.push(B);
     }
     if (player.robot == true) {
-        notes = new component(20, 28, "assets/Robo Boy Bullet.png", player.x + (player.width / 2), player.y - 15, "image")
+        notes = new component(20, 28, images.RoboBoyBullet, player.x + (player.width / 2), player.y - 15, "image")
         supullets.push(notes);
         setSpeedArray.push(notes);
     }
     supullets.push(supullet);
     setSpeedArray.push(supullet);
     if (boss2Pet !== null) {
-        b2Bullets = new component(10, 10, "assets/Earth Fragment 01.png", boss2Pet.x + 10, boss2Pet.y, "image");
+        b2Bullets = new component(10, 10, images.EarthFragment01, boss2Pet.x + 10, boss2Pet.y, "image");
         supullets.push(b2Bullets);
         setSpeedArray.push(b2Bullets);
     }
@@ -1374,9 +1437,9 @@ var moveActive = true;
 function portalBehavior() {
     if (portal !== null) {
         if (within(player.x, portal.x + portal.width / 2, 150) && within(player.y, portal.y + portal.height / 2, 150)) {
-            portal.image.src = "assets/Door (Opened).png";
+            portal.color = images.DoorOpened;
         } else {
-            portal.image.src = "assets/Door (Closed).png"
+            portal.color = images.DoorClosed;
         }
         if (player.crashWith(portal)) {
             setLevel();
@@ -1505,7 +1568,7 @@ function noobBossBehavior() {
    	        createMimic = true;
 
             noobBoss = null;
-            noobPet = new component(34, 46, "assets/The Jackhammer.png", player.x - player.width, player.y + player.height, "image");
+            noobPet = new component(34, 46, images.TheJackhammer, player.x - player.width, player.y + player.height, "image");
             allGameElements.push(noobPet);
             bulletsNumber += 1;
         }
@@ -1569,7 +1632,6 @@ function updateEverything() {
 var fps = 50;
 
 function updateGameArea() {
-    requestAnimationFrame(updateGameArea);
     myGameArea.clear();
     if (player.x >= 400) {
         scrollX = player.x - 400;
@@ -1609,6 +1671,8 @@ function updateGameArea() {
     }
 
     getItem(correspondItem());
+    requestAnimationFrame(updateGameArea);
+
 }
 
 
@@ -1655,7 +1719,7 @@ function moveleft() {
         player.speedX = 0;
     } else {
         player.speedX = -playerMovementSpeed;
-        player.image = pleaseLoadMeFirstBeforeYouStartPlaying3;
+        player.color = images.PlayerSpritefl
 
     }
 }
@@ -1665,7 +1729,7 @@ function moveright() {
         player.speedx = 0;
     } else {
         player.speedX = playerMovementSpeed;
-        player.image = pleaseLoadMeFirstBeforeYouStartPlaying2;
+        player.color = images.PlayerSprite;
     }
 }
 window.onkeydown = function(e) {
@@ -1691,7 +1755,7 @@ window.onkeydown = function(e) {
         movedown();
     }
     if (key == "37" || key == "38" || key == "39" || key == "40") {
-        player.image = pleaseLoadMeFirstBeforeYouStartPlaying;
+        player.color = images.PlayerSpriteDabRedEyes;
     }
 
 }
@@ -1739,7 +1803,7 @@ window.onkeyup = function(e) {
         //  b2Bullets.speedY = -bulletsSpeed;
         // }
         //    supullet.speedY = -bulletsSpeed;
-        player.image = pleaseLoadMeFirstBeforeYouStartPlaying2;
+        player.color = images.PlayerSpritefl;
     }
     if (key == "40") {
         shoot();
@@ -1748,7 +1812,7 @@ window.onkeyup = function(e) {
         // 	 b2Bullets.speedY = bulletsSpeed
         //  }
         //    supullet.speedY = bulletsSpeed;
-        player.image = pleaseLoadMeFirstBeforeYouStartPlaying2;
+        player.color = images.PlayerSpritefl;
 
     }
     if (key == "37") {
@@ -1759,7 +1823,7 @@ window.onkeyup = function(e) {
         // 	 b2Bullets.speedX = -bulletsSpeed;
         //  }
         //    supullet.speedX = -bulletsSpeed;
-        player.image = pleaseLoadMeFirstBeforeYouStartPlaying3;
+        player.color = images.PlayerSpritefl;
     }
     if (key == "39") {
         shoot();
@@ -1772,7 +1836,7 @@ window.onkeyup = function(e) {
         //    b2Bullets.speedX = bulletsSpeed;
         //  }
         //   supullet.speedX = bulletsSpeed;
-        player.image = pleaseLoadMeFirstBeforeYouStartPlaying2;
+        player.color = images.PlayerSprite;
     }
 }
 
