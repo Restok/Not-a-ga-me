@@ -31,15 +31,15 @@
 <script>
 
 </script>
+    <script data-main="index" src="require.js"></script>
     <script src="popUps.js"></script>
     <script src="notBeingLazyAsFuck.js"></script>
 
-    <script src="index.js"></script>
+    <script src="index.js" type = "module"></script>
     <script src="staticElements.js"></script>
     <script>
       $('.someButton').on('click', function(){
         $('.someButton').hide();
-
         startGame();
       })
 

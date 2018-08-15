@@ -100,7 +100,4 @@ function updatehearts(){
 	clearBoard();
 	heart.update();
 	bossHealth.update();
-  requestAnimationFrame(updatehearts)
-
 }
-requestAnimationFrame(updatehearts, 20);

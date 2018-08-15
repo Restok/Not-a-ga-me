@@ -1,3 +1,5 @@
+import { createImageCache } from "canvas-image-cache";
+
 var player;
 var supullet;
 var enemyBullet;
@@ -53,6 +55,8 @@ var noobPet = null;
 var noobBoss = null;
 var spinny = null;
 var mimicBullets = [];
+
+
 
 function circlePath(following) {
     circle.centerX = following.x + following.width / 2;
