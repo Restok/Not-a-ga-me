@@ -1,5 +1,3 @@
-import { createImageCache } from "canvas-image-cache";
-
 var player;
 var supullet;
 var enemyBullet;
@@ -55,7 +53,20 @@ var noobPet = null;
 var noobBoss = null;
 var spinny = null;
 var mimicBullets = [];
+var waitToLoad = [];
 
+var pleaseLoadMeFirstBeforeYouStartPlaying = new Image(70, 58.45);
+pleaseLoadMeFirstBeforeYouStartPlaying.src = "assets/Player Sprite Dab Red Eyes.png";
+
+var pleaseLoadMeFirstBeforeYouStartPlaying2 = new Image(70, 58.45);
+pleaseLoadMeFirstBeforeYouStartPlaying2.src = "assets/Player Sprite.png";
+
+var pleaseLoadMeFirstBeforeYouStartPlaying3 = new Image(70, 58.45);
+pleaseLoadMeFirstBeforeYouStartPlaying3.src = "assets/Player Spritefl.png";
+
+waitToLoad.push(pleaseLoadMeFirstBeforeYouStartPlaying);
+waitToLoad.push(pleaseLoadMeFirstBeforeYouStartPlaying2);
+waitToLoad.push(pleaseLoadMeFirstBeforeYouStartPlaying3);
 
 
 function circlePath(following) {
@@ -88,9 +99,11 @@ function startGame() {
     // createEnemy(650, 300, 650, 500);
     // createNoobBoss();
     player.health = 6;
+    setHealth();
+
     player.friendly = true;
     allGameElements.push(player);
-    requestAnimationFrame(updateGameArea);
+    pleaseLoadMeFirstBeforeYouStartPlaying.onload = requestAnimationFrame(updateGameArea);
 }
 
 
@@ -1221,6 +1234,7 @@ class component {
         this.Bitem = false;
         this.robot = false;
         this.health = 0;
+        
     }
 
     update() {
@@ -1468,7 +1482,7 @@ function spawnMinions() {
         noobMinions.push(minion);
     }
 }
-noobBossIsAlive = true;
+var noobBossIsAlive = true;
 
 function noobBossBehavior() {
     if (noobBossIsAlive) {
@@ -1641,7 +1655,7 @@ function moveleft() {
         player.speedX = 0;
     } else {
         player.speedX = -playerMovementSpeed;
-        player.image.src = "assets/Player Spritefl.png"
+        player.image = pleaseLoadMeFirstBeforeYouStartPlaying3;
 
     }
 }
@@ -1651,8 +1665,7 @@ function moveright() {
         player.speedx = 0;
     } else {
         player.speedX = playerMovementSpeed;
-        player.image.src = "assets/Player Sprite.png"
-
+        player.image = pleaseLoadMeFirstBeforeYouStartPlaying2;
     }
 }
 window.onkeydown = function(e) {
@@ -1678,7 +1691,7 @@ window.onkeydown = function(e) {
         movedown();
     }
     if (key == "37" || key == "38" || key == "39" || key == "40") {
-        player.image.src = "assets/Player Sprite Dab Red Eyes.png";
+        player.image = pleaseLoadMeFirstBeforeYouStartPlaying;
     }
 
 }
@@ -1726,7 +1739,7 @@ window.onkeyup = function(e) {
         //  b2Bullets.speedY = -bulletsSpeed;
         // }
         //    supullet.speedY = -bulletsSpeed;
-        player.image.src = "assets/Player Sprite.png"
+        player.image = pleaseLoadMeFirstBeforeYouStartPlaying2;
     }
     if (key == "40") {
         shoot();
@@ -1735,7 +1748,7 @@ window.onkeyup = function(e) {
         // 	 b2Bullets.speedY = bulletsSpeed
         //  }
         //    supullet.speedY = bulletsSpeed;
-        player.image.src = "assets/Player Sprite.png"
+        player.image = pleaseLoadMeFirstBeforeYouStartPlaying2;
 
     }
     if (key == "37") {
@@ -1746,7 +1759,7 @@ window.onkeyup = function(e) {
         // 	 b2Bullets.speedX = -bulletsSpeed;
         //  }
         //    supullet.speedX = -bulletsSpeed;
-        player.image.src = "assets/Player Spritefl.png"
+        player.image = pleaseLoadMeFirstBeforeYouStartPlaying3;
     }
     if (key == "39") {
         shoot();
@@ -1759,7 +1772,7 @@ window.onkeyup = function(e) {
         //    b2Bullets.speedX = bulletsSpeed;
         //  }
         //   supullet.speedX = bulletsSpeed;
-        player.image.src = "assets/Player Sprite.png"
+        player.image = pleaseLoadMeFirstBeforeYouStartPlaying2;
     }
 }
 

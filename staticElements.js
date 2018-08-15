@@ -96,8 +96,13 @@ function setHealth(){
 }
 		bossHealth = new component2(494, 3, "green", 150, 450, "a");
 
+
 function updatehearts(){
 	clearBoard();
 	heart.update();
-	bossHealth.update();
+  bossHealth.update();
+  requestAnimationFrame(updatehearts)
+
 }
+requestAnimationFrame(updatehearts)
+
