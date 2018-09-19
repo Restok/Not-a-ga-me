@@ -24,7 +24,7 @@ function universalBossDeath(bossName, alreadyCreatedGif){
 
             player.x = 400;
             player.y = 300;
-            itemChest = new component(250, 173, "assets/Treasure Chest Closed.png", 750-125, 400-86, "image");
+            itemChest = new component(250, 173, images.TreasureChestClosed, 750-125, 400-86, "image");
             allGameElements.push(itemChest);
             spawnOne = false;
             bossName = null;

@@ -1347,7 +1347,7 @@ class component {
 function shoot() {
     supullet = new component(50, 50, images.SupremeAmmo, player.x + (player.width / 2), player.y, "image");
     if (player.Bitem == true) {
-        supullet.color = images.SupremeAmmo
+        supullet.color = images.SubremeAmmo;
         B = new component(20, 20, images.SubremePowerupPickup, player.x + (player.width / 2), player.y + 30, "image")
         supullets.push(B);
         setSpeedArray.push(B);
@@ -1687,6 +1687,7 @@ function getItem(item) {
             }
             if (correspondItem() == dmg) {
                 player.Bitem = true;
+                
                 bulletsNumber += 1;
             } else if (correspondItem() == mspd) {
                 player.robot = true;
