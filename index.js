@@ -19,7 +19,7 @@ var spiralSpeedY = 5;
 var spiralSpeedX = 0;
 var spirCtrl = 0;
 var supullets = []
-var bossHealth;
+var boss;
 var scrollElements = [];
 var scrollX;
 var scrollY;
@@ -191,7 +191,7 @@ function removeFromAll(removed) {
 
 function createNoobBoss() {
     noobBoss = new component(170, 229, images.TheJackhammer, 650, 300, "image");
-    noobBoss.health = 10;
+    noobBoss.health = 500;
     noobBoss.isBoss = true;
     noobBoss.friendly = false;
     allGameElements.push(noobBoss);
@@ -378,7 +378,7 @@ function createEnemy2(x, y) {
     created = false;
     boss2 = new component(180, 207, images.Boss2MedicatedMushroom, x, y, "image");
     boss2.friendly = false;
-    boss2.health = 10;
+    boss2.health = 200;
     boss2.isBoss = true;
     timeUntilGone = 0;
     allGameElements.push(boss2);
@@ -676,7 +676,7 @@ function spawnMimic() {
     mimic = new component(534, 200, images.mimic, 750 - 231, 400 - 86, "image");
     mimic.friendly = false;
     mimic.isBoss = true;
-    mimic.health = 1;
+    mimic.health = 400;
     allGameElements.push(mimic);
 }
 
@@ -1064,7 +1064,7 @@ function createEnemy(startX, startY, endX, endY) {
     enemy.endY = endY;
     enemy.startX = startX;
     enemy.startY = startY;
-    enemy.health = 10;
+    enemy.health = 100;
     enemy.isBoss = true;
     allGameElements.push(enemy);
 }
