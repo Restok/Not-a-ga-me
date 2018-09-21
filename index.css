@@ -21,10 +21,12 @@
 	margin-top: 100px;
 
 }
+
 .gameBG{
 	transform: translate3d(0,0,0);
 	background-image: url("assets/grungeBG.png");
 	background-size: cover;
+	background-repeat: no-repeat;
 }
 .closeButton:hover{
 	cursor:pointer;
@@ -37,7 +39,6 @@
 #wrapper {
 	position: absolute;
 	white-space: nowrap;
-    background-color: black;
 }
 
 .ddeath{
@@ -73,3 +74,4 @@
 	cursor:pointer;
 
 }
+

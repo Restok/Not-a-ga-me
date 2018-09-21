@@ -20,11 +20,9 @@ function createPopUp(source, alt){
     document.getElementById("popUpParent").appendChild(close);
 }
 
-function itemAcquired(){
-	ia = document.createElement("IMG");
-  ia.setAttribute("src", "assets/itemAcquired.png");
+function itemAcquired(source){
+	ia = source;
   ia.setAttribute("width", 800);
-  ia.setAttribute("height", 245);
   ia.setAttribute("alt", " ");
   ia.setAttribute("class", "scenes");
   ia.setAttribute("id", "itemScreen");

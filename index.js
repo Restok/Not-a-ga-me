@@ -107,7 +107,11 @@ var sources = {
     TreasureChestClosed:'assets/Treasure Chest Closed.png',
     TreasureChestOpened:'assets/Treasure Chest Opened.png',
     TreasureChest:'assets/Treasure Chest.png',
-    WackAssCryptocurrencyBullet:'assets/Wack Ass Cryptocurrency Bullet.png'
+    WackAssCryptocurrencyBullet:'assets/Wack Ass Cryptocurrency Bullet.png',
+    BAcquired: 'assets/BAcquired.png',
+    robotAcquired: 'assets/robotAcquired.png',
+
+
 }
 var loading = "";
 var images = {};
@@ -156,8 +160,8 @@ var ball = {
     speed: 0.1
 }
 loadImages(sources, function(){
-    startGame();
 })
+
 function startGame() {
     myGameArea.start();
     createGif(0, 0, "");
@@ -302,10 +306,7 @@ function spawnItems() {
         player.speedX = 0;
         player.speedY = 0;
         itemIndex = Math.floor((Math.random() * itemsArray.length))
-        itemAcquired();
-        $("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function() {
-            $("#itemScreen").remove();
-        });
+        gotItem = false;
 
         itemChosen = itemsArray[itemIndex];
         itemsArray.splice(itemIndex, 1)
@@ -1418,21 +1419,6 @@ var Boss1Action = 0;
 var enemyIsAlive = true;
 var moveActive = true;
 
-// function scroll(){
-//     var originalSpeedX = 0;
-//       if(player.x >=600){
-//         player.x = 600;
-//       for(i = 0; i<scrollElements.length; i++){
-//         try{
-//         originalSpeedX = scrollElements[i].speedX;
-//         }
-//         catch{
-//           console.log(scrollElements[i]);
-//         }
-//         scrollElements[i].speedX = originalSpeedX -2 ;
-//       }  
-//     }
-// }
 
 function portalBehavior() {
     if (portal !== null) {
@@ -1635,6 +1621,7 @@ function updateGameArea() {
     myGameArea.clear();
     if (player.x >= 400) {
         scrollX = player.x - 400;
+        console.log(scrollX);
     } else {
         scrollX = 0;
     }
@@ -1669,13 +1656,14 @@ function updateGameArea() {
     if (mimic !== null) {
         mimicBehavior();
     }
-
-    getItem(correspondItem());
+    if(!gotItem){
+        getItem(correspondItem());
+    }
     requestAnimationFrame(updateGameArea);
 
 }
 
-
+var gotItem= true;
 
 function getItem(item) {
     if (item != null) {
@@ -1687,12 +1675,27 @@ function getItem(item) {
             }
             if (correspondItem() == dmg) {
                 player.Bitem = true;
-                
+                itemAcquired(images.BAcquired);
+                gotItem = true;
+
+                $("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function() {
+                    $("#itemScreen").remove();
+                });
+
+
                 bulletsNumber += 1;
             } else if (correspondItem() == mspd) {
                 player.robot = true;
                 playerMovementSpeed = 6;
                 bulletsNumber += 1;
+                itemAcquired(images.robotAcquired);
+                gotItem = true;
+
+                $("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function() {
+                    $("#itemScreen").remove();
+
+                });
+
             }
         }
     }
