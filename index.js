@@ -19,7 +19,7 @@ var spiralSpeedY = 5;
 var spiralSpeedX = 0;
 var spirCtrl = 0;
 var supullets = []
-var boss;
+var bossHealth;
 var scrollElements = [];
 var scrollX;
 var scrollY;
@@ -37,7 +37,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 0;
+var level = 3;
 var portal = null;
 var d1;
 var d2;
@@ -55,6 +55,7 @@ var spinny = null;
 var mimicBullets = [];
 var waitToLoad = [];
 var i;
+var finalBoss = null;
 
 var sources = {
     WackAssCryptocurrency:'assets/Wack Ass Cryptocurrency.png',
@@ -159,8 +160,7 @@ var ball = {
     y: 0,
     speed: 0.1
 }
-loadImages(sources, function(){
-})
+
 
 function startGame() {
     myGameArea.start();
@@ -191,14 +191,52 @@ function removeFromAll(removed) {
 
 function createNoobBoss() {
     noobBoss = new component(170, 229, images.TheJackhammer, 650, 300, "image");
-    noobBoss.health = 500;
+    noobBoss.health = 10;
     noobBoss.isBoss = true;
     noobBoss.friendly = false;
     allGameElements.push(noobBoss);
     spinny = new component(30, 30, "red", ball.x, ball.y)
     allGameElements.push(spinny);
+}
+
+function createFinalBoss(){
+    finalBoss = new component(300, 300, "red", 650, 300, "");
+    finalBoss.health = 1000;
+    finalBoss.isBoss = true;
+    finalBoss.friendly = false;
+    allGameElements.push(finalBoss);
+}
+var fbAttacking = false;
+var fbAttackIndex = Math.floor(Math.random());
+var fbisAlive = true;
+function finalBossBehavior(){
+    fbisAlive = finalBoss.health > 0 ? true:false;
+    if(fbisAlive){
+        roam(finalBoss, 3);
+        bounce(finalBoss);
+        sprayDiagonal(finalBoss);
+    }
+}
+var spdgBullets = [];
+var speedxar = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7];
+var speedyar = [0, 1, 2, 3, 4, 5, 6 ,7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -6, -5, -4, -3, -2, -1 ,0];
+var countBullets = 0;
+var spdgTimer=  0;
+function sprayDiagonal(boss){
+
+    while(countBullets< 100){
+        if(spdgTimer%5==0){
+            spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+            spdgBullet.speedX = speedxar[countBullets%29];
+            spdgBullet.speedY = speedyar[countBullets%29];
+            spdgBullets.push(spdgBullet);
+            spdgTimer+=1;
+        }
+        countBullets ++;
 
 
+    }
+    countBullets = 0;
 }
 
 function setLevel() {
@@ -279,7 +317,37 @@ function setLevel() {
             timeUntilGone = 0;
 
             break;
-    }
+        
+        case 3:
+            createMimic = false;
+            immunityFrame.frame = 0;
+            immunityFrame2.frame = 0;
+            supullets = [];
+            removeFromAll(portal);
+            removeFromAll(itemChest);
+            portal = null;
+            itemChest = null;
+            bossHealth = new component2(494, 3, "green", 150, 450, "a");
+            createPopUp("assets/BIGNIBBA.jpg", "cutScene");
+            $('#close').on("click", function() {
+
+                $('#close').hide();
+                $('#setting').fadeOut(1000, function() {
+
+                    created = false;
+                    createFinalBoss();
+                    player.x = 100;
+                    player.y = 100;
+                    level += 1;
+                    $("#close").remove();
+                    $("#setting").remove();
+                })
+            })
+            destroyBoss = false;
+            timeUntilGone = 0;
+            break;
+            
+        }
 
 }
 
@@ -378,7 +446,7 @@ function createEnemy2(x, y) {
     created = false;
     boss2 = new component(180, 207, images.Boss2MedicatedMushroom, x, y, "image");
     boss2.friendly = false;
-    boss2.health = 200;
+    boss2.health = 10;
     boss2.isBoss = true;
     timeUntilGone = 0;
     allGameElements.push(boss2);
@@ -388,12 +456,12 @@ var roamNewDirection = 0;
 var speedXrandom = 0;
 var speedYrandom = 0;
 
-function roam(theEnemy) {
+function roam(theEnemy, speed) {
     bounceToggle = true;
     if (roamNewDirection % 150 == 0) {
-        speedXrandom = roundTo(Math.random() * 1.5, 2) + 1;
+        speedXrandom = roundTo(Math.random() * speed, 2) + 1;
         speedXrandom *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
-        speedYrandom = roundTo(Math.random() * 1.5, 2) + 1;
+        speedYrandom = roundTo(Math.random() * speed, 2) + 1;
         speedYrandom *= Math.floor((Math.random() * 2)) == 1 ? 1 : -1;
         theEnemy.speedX = speedXrandom;
         theEnemy.speedY = speedYrandom;
@@ -546,7 +614,7 @@ var burstTimes = 0;
 function burstFire(enemynum) {
     enemynum.speedX = 0;
     enemynum.speedY = 0;
-    burstControl += 1;
+    burstControl += 1; 
     if (burstControl > 70 && burstControl % 5 == 0) {
         enemyBullet = new component(10, 10, "red", enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 2, "a");
         enemyBullet2 = new component(10, 10, "red", enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 2, "a");
@@ -676,7 +744,7 @@ function spawnMimic() {
     mimic = new component(534, 200, images.mimic, 750 - 231, 400 - 86, "image");
     mimic.friendly = false;
     mimic.isBoss = true;
-    mimic.health = 400;
+    mimic.health = 1;
     allGameElements.push(mimic);
 }
 
@@ -740,7 +808,7 @@ function boss2Behavior() {
     if (boss2IsAlive && boss2.health > 100) {
         if (!Boss2Attacking) {
             atkTime = 0;
-            roam(boss2);
+            roam(boss2, 2);
             bounce(boss2);
             myGameArea.frameNo += 1;
             if (everyinterval(150)) {
@@ -956,7 +1024,7 @@ function bounce(subject) {
 
         }
         if (subject.x >= 1500 - subject.width) {
-            subject.y = 1499 - subject.width;
+            subject.x = 1499 - subject.width;
             subject.speedX *= -1;
         }
     }
@@ -1064,7 +1132,7 @@ function createEnemy(startX, startY, endX, endY) {
     enemy.endY = endY;
     enemy.startX = startX;
     enemy.startY = startY;
-    enemy.health = 100;
+    enemy.health = 10;
     enemy.isBoss = true;
     allGameElements.push(enemy);
 }
@@ -1595,6 +1663,11 @@ function updateEverything() {
         mimicBullets[b].update();
     }
     disappearWhenTouchingWall(mimicBullets);
+    for (var b = 0; b < spdgBullets.length; b += 1) {
+        spdgBullets[b].newPos();
+        spdgBullets[b].update();
+    }
+    disappearWhenTouchingWall(spdgBullets);
 
     if (level == 3) {
         for (x = 0; x < noobMinions.length; x++) {
@@ -1621,7 +1694,6 @@ function updateGameArea() {
     myGameArea.clear();
     if (player.x >= 400) {
         scrollX = player.x - 400;
-        console.log(scrollX);
     } else {
         scrollX = 0;
     }
@@ -1655,6 +1727,10 @@ function updateGameArea() {
     }
     if (mimic !== null) {
         mimicBehavior();
+    }
+    if (finalBoss !== null) {
+        finalBossBehavior();
+        
     }
     if(!gotItem){
         getItem(correspondItem());

@@ -1,3 +1,8 @@
+@font-face{
+	font-family: "pixel";
+	src: url(assets/fonts/pixelart.ttf);
+}
+
 .popups{
 	position:absolute;
 	width:800px;
@@ -56,7 +61,8 @@
     to {opacity:0;}
 }
 
-.someButton{
+#someButton{
+	font-family: pixel;
 	position: absolute;
 	width: 200px;
 	height: 50px;
@@ -67,9 +73,10 @@
 	background-color:#80ccff;
 	color:black;
 	font-size:20px;
+	z-index: 10;
 }
 
-.someButton:hover{
+#someButton:hover{
 	background-color:#5fb8f4;
 	cursor:pointer;
 
