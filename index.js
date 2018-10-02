@@ -212,31 +212,99 @@ var fbisAlive = true;
 function finalBossBehavior(){
     fbisAlive = finalBoss.health > 0 ? true:false;
     if(fbisAlive){
-        roam(finalBoss, 3);
         bounce(finalBoss);
-        sprayDiagonal(finalBoss);
+        if(mbCtrl % 500 == 0){
+            massiveBullet(finalBoss, 2);
+            mbCtrl ++;
+
+        }
+        else{
+            mbCtrl ++;
+        }
     }
 }
+mbCtrl = 0;
 var spdgBullets = [];
-var speedxar = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7];
-var speedyar = [0, 1, 2, 3, 4, 5, 6 ,7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -6, -5, -4, -3, -2, -1 ,0];
+var speedxar = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6];
+var speedyar = [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -6, -5, -4, -3, -2, -1];
 var countBullets = 0;
+var countBullets2 = 7;
+var countBullets3 = 14;
+var countBullets4 = 21;
+
+
 var spdgTimer=  0;
 function sprayDiagonal(boss){
+    if(spdgTimer %10 ==0){
+        spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+        spdgBullet.speedX = speedxar[countBullets%speedxar.length];
+        spdgBullet.speedY = speedyar[countBullets%speedyar.length];
+        spdgBullets.push(spdgBullet);
+        spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+        spdgBullet.speedX = speedxar[countBullets2%speedxar.length];
+        spdgBullet.speedY = speedyar[countBullets2%speedyar.length];
+        spdgBullets.push(spdgBullet);
+        spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+        spdgBullet.speedX = speedxar[countBullets3%speedxar.length];
+        spdgBullet.speedY = speedyar[countBullets3%speedyar.length];
+        spdgBullets.push(spdgBullet);
+        spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+        spdgBullet.speedX = speedxar[countBullets4%speedxar.length];
+        spdgBullet.speedY = speedyar[countBullets4%speedyar.length];
+        spdgBullets.push(spdgBullet);
 
-    while(countBullets< 100){
-        if(spdgTimer%5==0){
-            spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
-            spdgBullet.speedX = speedxar[countBullets%29];
-            spdgBullet.speedY = speedyar[countBullets%29];
-            spdgBullets.push(spdgBullet);
-            spdgTimer+=1;
-        }
         countBullets ++;
+        countBullets2 ++;
+        countBullets3 ++;
+        countBullets4 ++;
 
 
+        console.log(countBullets);
     }
-    countBullets = 0;
+    spdgTimer++;
+}
+
+function massiveBullet(enemynum, bSpeed) {
+    enemyBullet = new component(600, 600, "red", enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 1.7, "a");
+
+
+    //	TAKES THE DIFFERENCE BETWEEN ENEMY AND PLAYER
+
+    var ydif = (player.y) - enemynum.y - enemynum.height / 1.7;
+    var xdif = (player.x) - enemynum.x - enemynum.width / 2;
+
+    //	MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
+    //	THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
+
+    if (ydif <= 0 && xdif >= 0) {
+        var multiplier = (xdif * -1 + ydif) / bSpeed;
+    } else if (ydif >= 0 && xdif <= 0) {
+        var multiplier = (xdif + ydif * -1) / bSpeed;
+    } else {
+        var multiplier = (xdif + ydif) / bSpeed;
+    }
+
+    if (ydif <= 0 && xdif >= 0) {
+        enemyBullet.speedX = (-xdif / multiplier);
+        enemyBullet.speedY = (-ydif / multiplier);
+    } else if (xdif <= 0 && ydif <= 0) {
+        enemyBullet.speedX = (-xdif / multiplier);
+        enemyBullet.speedY = (-ydif / multiplier);
+    } else if (ydif >= 0 && xdif <= 0) {
+        enemyBullet.speedX = (-xdif / multiplier);
+        enemyBullet.speedY = (-ydif / multiplier);
+    } else if (ydif >= 0 && xdif >= 0) {
+        enemyBullet.speedX = (xdif / multiplier);
+        enemyBullet.speedY = (ydif / multiplier);
+    } else if (ydif = 0) {
+        enemyBullet.speedX = (-xdif / multiplier);
+        enemyBullet.speedY = (ydif / multiplier);
+    } else {
+        enemyBullet.speedX = (-xdif / multiplier);
+        enemyBullet.speedY = (-ydif / multiplier);
+    }
+    allGameElements.push(enemyBullet);
+
 }
 
 function setLevel() {
@@ -1265,6 +1333,8 @@ function enemyFire(enemynum) {
 
 
 }
+
+
 
 
 function within(num1, num2, range) {
