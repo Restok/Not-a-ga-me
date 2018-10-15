@@ -56,7 +56,7 @@ var mimicBullets = [];
 var waitToLoad = [];
 var i;
 var finalBoss = null;
-
+var massiveBulletArray = [];
 var sources = {
     WackAssCryptocurrency:'assets/Wack Ass Cryptocurrency.png',
     BIGNIBBA:'assets/BIGNIBBA.jpg',
@@ -207,23 +207,57 @@ function createFinalBoss(){
     allGameElements.push(finalBoss);
 }
 var fbAttacking = false;
-var fbAttackIndex = Math.floor(Math.random());
 var fbisAlive = true;
+var fbAtkCounter = 0;
+var fbAttackIndex = Math.floor(Math.random()*2);
+
 function finalBossBehavior(){
     fbisAlive = finalBoss.health > 0 ? true:false;
-    if(fbisAlive){
-        bounce(finalBoss);
-        if(mbCtrl % 500 == 0){
-            massiveBullet(finalBoss, 2);
-            mbCtrl ++;
 
+
+    if(fbisAlive){
+        if(fbAttacking == false){
+            roam(finalBoss);
+            fbAtkCounter ++;
+
+            if(fbAtkCounter > 250){
+                fbAttacking = true;
+                fbAttackIndex = Math.floor(Math.random()*2);
+
+            }
         }
-        else{
-            mbCtrl ++;
+        if(fbAttacking){
+            fbAtkCounter ++;
+
+            switch(fbAttackIndex){
+                case 0:
+                    if(mbCtrl % 500 == 0){
+                        massiveBullet(finalBoss, 2);    
+                        mbCtrl ++;
+                    }
+
+                    else{
+                        mbCtrl ++;
+                        enemyBullet.width+=2;
+                        enemyBullet.height+=2;
+                    }
+
+
+                    break;
+                case 1:
+                    sprayDiagonal(finalBoss);
+            }
+            if(fbAtkCounter > 1000){
+                fbAtkCounter = 0;
+                fbAttacking = false;
+            }
         }
+        bounce(finalBoss);
+
+
     }
 }
-mbCtrl = 0;
+var mbCtrl = 0;
 var spdgBullets = [];
 var speedxar = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6];
 var speedyar = [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -6, -5, -4, -3, -2, -1];
@@ -264,8 +298,9 @@ function sprayDiagonal(boss){
     spdgTimer++;
 }
 
+
 function massiveBullet(enemynum, bSpeed) {
-    enemyBullet = new component(600, 600, "red", enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 1.7, "a");
+    enemyBullet = new component(10, 10, "black", enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 1.7, "a");
 
 
     //	TAKES THE DIFFERENCE BETWEEN ENEMY AND PLAYER
@@ -303,7 +338,8 @@ function massiveBullet(enemynum, bSpeed) {
         enemyBullet.speedX = (-xdif / multiplier);
         enemyBullet.speedY = (-ydif / multiplier);
     }
-    allGameElements.push(enemyBullet);
+    
+    massiveBulletArray.push(enemyBullet);
 
 }
 
@@ -1709,13 +1745,13 @@ function updateEverything() {
     bossPetBehavior(petDirection, noobPet, 40, 0);
     bossPetBehavior(petDirection, mimicPet, 60, 0);
     disappearWhenTouchingWall(enemyBullets)
-
+    disappearWhenTouchingWall(massiveBulletArray);
     if (level == 1) {
         for (i = 0; i < enemyBullets.length; i += 1) {
             enemyBullets[i].newPos();
             enemyBullets[i].update();
         }
-        disappearWhenTouchingWall(enemyBulletSpiral)
+    disappearWhenTouchingWall(enemyBulletSpiral)
         for (i = 0; i < enemyBulletSpiral.length; i += 1) {
             enemyBulletSpiral[i].newPos();
             enemyBulletSpiral[i].update();
@@ -1738,6 +1774,11 @@ function updateEverything() {
         spdgBullets[b].update();
     }
     disappearWhenTouchingWall(spdgBullets);
+    disappearWhenTouchingWall(mimicBullets);
+    for (var b = 0; b < massiveBulletArray.length; b += 1) {
+        massiveBulletArray[b].newPos();
+        massiveBulletArray[b].update();
+    }
 
     if (level == 3) {
         for (x = 0; x < noobMinions.length; x++) {
@@ -1749,7 +1790,7 @@ function updateEverything() {
 
     if (level == 2) {
 
-        disappearWhenTouchingWall(sprayBulletsArray);
+        disapdisappearWhenpearWhenTouchingWall(sprayBulletsArray);
 
         for (i = 0; i < sprayBulletsArray.length; i += 1) {
             sprayBulletsArray[i].newPos();
