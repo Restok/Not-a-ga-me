@@ -1,3 +1,4 @@
+try{
 var player;
 var supullet;
 var enemyBullet;
@@ -114,6 +115,20 @@ var sources = {
 
 
 }
+
+// if (typeof console  != "undefined") 
+//     if (typeof console.log != 'undefined')
+//         console.olog = console.log;
+//     else
+//         console.olog = function() {};
+
+// // console.log = function(message) {
+// //     console.olog(message);
+// //     $('#debugDiv').append('<p>' + message + '</p>');
+// // };
+// // console.error = console.debug = console.info =  console.log
+// // console.log("Help");
+
 var loading = "";
 var images = {};
 
@@ -213,8 +228,6 @@ var fbAttackIndex = Math.floor(Math.random()*2);
 
 function finalBossBehavior(){
     fbisAlive = finalBoss.health > 0 ? true:false;
-
-
     if(fbisAlive){
         if(fbAttacking == false){
             roam(finalBoss);
@@ -253,7 +266,7 @@ function finalBossBehavior(){
             }
         }
         bounce(finalBoss);
-
+          roam(finalBoss);
 
     }
 }
@@ -2148,4 +2161,8 @@ function trackEnemy(enemyName, trackArray) {
             }
         }
     }
+}
+}
+catch(err){
+  alert(err);
 }
