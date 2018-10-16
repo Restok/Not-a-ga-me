@@ -1,4 +1,4 @@
-try{
+
 var player;
 var supullet;
 var enemyBullet;
@@ -227,10 +227,11 @@ var fbAtkCounter = 0;
 var fbAttackIndex = Math.floor(Math.random()*2);
 
 function finalBossBehavior(){
+    console.log(finalBoss.x + ", " + finalBoss.y);
     fbisAlive = finalBoss.health > 0 ? true:false;
     if(fbisAlive){
         if(fbAttacking == false){
-            roam(finalBoss);
+            roam(finalBoss, 1);
             fbAtkCounter ++;
 
             if(fbAtkCounter > 250){
@@ -254,19 +255,22 @@ function finalBossBehavior(){
                         enemyBullet.width+=2;
                         enemyBullet.height+=2;
                     }
-
+                    if(fbAtkCounter > 1000){
+                        fbAtkCounter = 0;
+                        fbAttacking = false;
+                    }
 
                     break;
                 case 1:
                     sprayDiagonal(finalBoss);
+                    if(fbAtkCounter > 500){
+                        fbAtkCounter = 0;
+                        fbAttacking = false;
+                    }
             }
-            if(fbAtkCounter > 1000){
-                fbAtkCounter = 0;
-                fbAttacking = false;
-            }
+
         }
         bounce(finalBoss);
-          roam(finalBoss);
 
     }
 }
@@ -2162,7 +2166,4 @@ function trackEnemy(enemyName, trackArray) {
         }
     }
 }
-}
-catch(err){
-  alert(err);
-}
+
