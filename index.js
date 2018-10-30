@@ -1,4 +1,4 @@
-
+//https://github.com/Restok/Not-a-ga-me.git
 var player;
 var supullet;
 var enemyBullet;
@@ -224,10 +224,12 @@ function createFinalBoss(){
 var fbAttacking = false;
 var fbisAlive = true;
 var fbAtkCounter = 0;
-var fbAttackIndex = Math.floor(Math.random()*2);
+var fbAttackIndex = 0;
+var fbAttackIndexAr = [0,1];
 
 function finalBossBehavior(){
     console.log(finalBoss.x + ", " + finalBoss.y);
+    bulletsDamage(player, massiveBulletArray, 2);
     fbisAlive = finalBoss.health > 0 ? true:false;
     if(fbisAlive){
         if(fbAttacking == false){
@@ -236,16 +238,17 @@ function finalBossBehavior(){
 
             if(fbAtkCounter > 250){
                 fbAttacking = true;
-                fbAttackIndex = Math.floor(Math.random()*2);
+                fbAttackIndex = fbAttackIndex == 1 ? 0 : 1;
 
             }
         }
         if(fbAttacking){
             fbAtkCounter ++;
-
             switch(fbAttackIndex){
                 case 0:
                     if(mbCtrl % 500 == 0){
+                        finalBoss.speedX = 0;
+                        finalBoss.speedY = 0;
                         massiveBullet(finalBoss, 2);    
                         mbCtrl ++;
                     }
@@ -255,7 +258,7 @@ function finalBossBehavior(){
                         enemyBullet.width+=2;
                         enemyBullet.height+=2;
                     }
-                    if(fbAtkCounter > 1000){
+                    if(fbAtkCounter > 1050){
                         fbAtkCounter = 0;
                         fbAttacking = false;
                     }
@@ -263,7 +266,9 @@ function finalBossBehavior(){
                     break;
                 case 1:
                     sprayDiagonal(finalBoss);
-                    if(fbAtkCounter > 500){
+                    finalBoss.speedX = 0;
+                    finalBoss.speedY = 0;
+                    if(fbAtkCounter > 600){
                         fbAtkCounter = 0;
                         fbAttacking = false;
                     }
@@ -317,7 +322,7 @@ function sprayDiagonal(boss){
 
 
 function massiveBullet(enemynum, bSpeed) {
-    enemyBullet = new component(10, 10, "black", enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 1.7, "a");
+    enemyBullet = new component(0, 0, "black", enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 1.7, "a");
 
 
     //	TAKES THE DIFFERENCE BETWEEN ENEMY AND PLAYER
