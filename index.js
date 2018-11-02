@@ -38,7 +38,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 3;
+var level = 0;
 var portal = null;
 var d1;
 var d2;
@@ -79,6 +79,8 @@ var sources = {
     FinalFINALBossMK69VirginDefenseSystemFiring:'assets/Final FINAL Boss (MK69 Virgin Defense System) (Firing).png',
     FinalFINALBossMK69VirginDefenseSystemNotFiring:'assets/Final FINAL Boss (MK69 Virgin Defense System) (Not Firing).png',
     FinalBoss:'assets/FinalBoss.png',
+    FinalBossCensored:'assets/FinalBossCensored.png',
+    FinalBossCensoredFR:'assets/FinalBossCensoredFR.png',
     GoButtonCloseButton:'assets/Go Button (Close Button).png',
     grungeBG:'assets/grungeBG.png',
     GucciGayge1_6:'assets/Gucci Gayge 1_6.png',
@@ -206,7 +208,7 @@ function removeFromAll(removed) {
 
 function createNoobBoss() {
     noobBoss = new component(170, 229, images.TheJackhammer, 650, 300, "image");
-    noobBoss.health = 10;
+    noobBoss.health = 600;
     noobBoss.isBoss = true;
     noobBoss.friendly = false;
     allGameElements.push(noobBoss);
@@ -215,7 +217,7 @@ function createNoobBoss() {
 }
 
 function createFinalBoss(){
-    finalBoss = new component(300, 300, "red", 650, 300, "");
+    finalBoss = new component(300, 300, images.FinalBossCensored, 650, 300, "image");
     finalBoss.health = 1000;
     finalBoss.isBoss = true;
     finalBoss.friendly = false;
@@ -228,10 +230,18 @@ var fbAttackIndex = 0;
 var fbAttackIndexAr = [0,1];
 
 function finalBossBehavior(){
-    console.log(finalBoss.x + ", " + finalBoss.y);
     bulletsDamage(player, massiveBulletArray, 2);
+    bulletsDamage(player, spdgBullets, 1);
+    bulletsDamage(finalBoss, supullets, 1);
     fbisAlive = finalBoss.health > 0 ? true:false;
     if(fbisAlive){
+        if(player.x<(finalBoss.x+finalBoss.width/2)){
+            finalBoss.color = images.FinalBossCensored;
+        }
+        else{
+            finalBoss.color = images.FinalBossCensoredFR;
+        }
+
         if(fbAttacking == false){
             roam(finalBoss, 1);
             fbAtkCounter ++;
@@ -278,6 +288,13 @@ function finalBossBehavior(){
         bounce(finalBoss);
 
     }
+    else{
+        universalBossDeath(finalBoss, true);
+         if (destroyBoss) {
+
+            finalBoss = null;
+         }
+    }
 }
 var mbCtrl = 0;
 var spdgBullets = [];
@@ -291,20 +308,21 @@ var countBullets4 = 21;
 
 var spdgTimer=  0;
 function sprayDiagonal(boss){
+    bossx = boss.color == images.FinalBossCensored ? boss.x : boss.x+boss.width;
     if(spdgTimer %10 ==0){
-        spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+        spdgBullet = new component(20, 20 ,"red", bossx, boss.y + boss.height/2, "");
         spdgBullet.speedX = speedxar[countBullets%speedxar.length];
         spdgBullet.speedY = speedyar[countBullets%speedyar.length];
         spdgBullets.push(spdgBullet);
-        spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+        spdgBullet = new component(20, 20 ,"red", bossx, boss.y + boss.height/2, "");
         spdgBullet.speedX = speedxar[countBullets2%speedxar.length];
         spdgBullet.speedY = speedyar[countBullets2%speedyar.length];
         spdgBullets.push(spdgBullet);
-        spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+        spdgBullet = new component(20, 20 ,"red", bossx, boss.y + boss.height/2, "");
         spdgBullet.speedX = speedxar[countBullets3%speedxar.length];
         spdgBullet.speedY = speedyar[countBullets3%speedyar.length];
         spdgBullets.push(spdgBullet);
-        spdgBullet = new component(20, 20 ,"red", boss.x, boss.y + boss.height/2, "");
+        spdgBullet = new component(20, 20 ,"red", bossx, boss.y + boss.height/2, "");
         spdgBullet.speedX = speedxar[countBullets4%speedxar.length];
         spdgBullet.speedY = speedyar[countBullets4%speedyar.length];
         spdgBullets.push(spdgBullet);
@@ -474,6 +492,7 @@ function setLevel() {
             break;
             
         }
+        
 
 }
 
@@ -572,7 +591,7 @@ function createEnemy2(x, y) {
     created = false;
     boss2 = new component(180, 207, images.Boss2MedicatedMushroom, x, y, "image");
     boss2.friendly = false;
-    boss2.health = 10;
+    boss2.health = 300;
     boss2.isBoss = true;
     timeUntilGone = 0;
     allGameElements.push(boss2);
@@ -870,7 +889,7 @@ function spawnMimic() {
     mimic = new component(534, 200, images.mimic, 750 - 231, 400 - 86, "image");
     mimic.friendly = false;
     mimic.isBoss = true;
-    mimic.health = 1;
+    mimic.health = bulletsNumber*100;
     allGameElements.push(mimic);
 }
 
@@ -1000,7 +1019,7 @@ function boss2Behavior() {
         }
     }
 }
-var jumpSrcs = [images.EarthFragment01,images.EarthFragment02,images.EarthFragment03,images.EarthFragment04];
+var jumpSrcs = [];
 var srcIndex = 0;
 
 function jump(subject) {
@@ -1048,8 +1067,23 @@ function jump(subject) {
                                     sBY = roundTo(Math.random() * 7, 2) + 3;
                                     sBY *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
                                 }
-                                srcIndex = Math.floor(roundTo(Math.random() * 3));
-                                sprayBullets = new component(20, 20, jumpSrcs[srcIndex], (subject.x + (subject.width / 2)), subject.y + subject.height, "image");
+                                srcIndex = Math.floor(Math.random() * 4);
+                                sprayBullets = new component(20, 20, "", (subject.x + (subject.width / 2)), subject.y + subject.height, "image");
+                                switch(srcIndex){
+                                    case 0:
+                                        sprayBullets.color = images.EarthFragment01;
+                                        break;
+                                    case 1:
+                                        sprayBullets.color = images.EarthFragment02;
+                                        break;
+                                    case 2:
+                                        sprayBullets.color = images.EarthFragment03;
+                                        break;
+                                    default:
+                                        sprayBullets.color = images.EarthFragment04;
+                                    
+
+                                }
                                 sprayBullets.speedX = sBX;
                                 sprayBullets.speedY = sBY;
                                 sprayBulletsArray.push(sprayBullets);
@@ -1258,7 +1292,7 @@ function createEnemy(startX, startY, endX, endY) {
     enemy.endY = endY;
     enemy.startX = startX;
     enemy.startY = startY;
-    enemy.health = 10;
+    enemy.health = 100;
     enemy.isBoss = true;
     allGameElements.push(enemy);
 }
@@ -1722,7 +1756,7 @@ function spawnMinions() {
     spawnCount = Math.floor(Math.random() * 3) + 1;
     for (i = 0; i < spawnCount; i++) {
         minion = new component(40, 40, "blue", (noobBoss.x + Math.floor(Math.random() * 201) - 100), (noobBoss.y + Math.floor(Math.random() * 201) - 100));
-        minion.health = 10;
+        minion.health = 20;
         minion.friendly = false;
         noobMinions.push(minion);
     }
@@ -1812,7 +1846,7 @@ function updateEverything() {
 
     if (level == 2) {
 
-        disapdisappearWhenpearWhenTouchingWall(sprayBulletsArray);
+        disappearWhenTouchingWall(sprayBulletsArray);
 
         for (i = 0; i < sprayBulletsArray.length; i += 1) {
             sprayBulletsArray[i].newPos();
