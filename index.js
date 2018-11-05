@@ -57,6 +57,7 @@ var mimicBullets = [];
 var waitToLoad = [];
 var i;
 var finalBoss = null;
+var itemSrcArray = [];
 var massiveBulletArray = [];
 var sources = {
     WackAssCryptocurrency:'assets/Wack Ass Cryptocurrency.png',
@@ -186,6 +187,7 @@ function startGame() {
     createGif(0, 0, "");
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
     player = new component(70, 58.45, images.PlayerSprite, 450, 200, "image");
+    itemSrcArray = [images.SubremePowerupPickup, images.RavinRoboBoy, images.WackAssCryptocurrency, images.PortraitofYourMom];
     allGameElements.push(portal);
     document.getElementById("staticElements").style.opacity = 1;
 
@@ -374,7 +376,7 @@ function massiveBullet(enemynum, bSpeed) {
     } else if (ydif >= 0 && xdif >= 0) {
         enemyBullet.speedX = (xdif / multiplier);
         enemyBullet.speedY = (ydif / multiplier);
-    } else if (ydif = 0) {
+    } else if (ydif == 0) {
         enemyBullet.speedX = (-xdif / multiplier);
         enemyBullet.speedY = (ydif / multiplier);
     } else {
@@ -690,8 +692,7 @@ var itemProp = {
 }
 
 
-var itemSrcArray = [images.SubremePowerupPickup];
-console.log(itemSrcArray[0]);
+
 
 function defineItemWidth(iDex) {
     switch (iDex) {
@@ -720,7 +721,7 @@ function circleFire(enemynum) {
         for (var cc = 0; cc < 25; cc++) {
             var randomItemIndex = Math.floor(Math.random() * itemSrcArray.length);
             defineItemWidth(randomItemIndex);
-            EBS = new component(itemProp.width, itemProp.height, images.eval(itemSrcArray[randomItemIndex]), enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 2, "image");
+            EBS = new component(itemProp.width, itemProp.height, itemSrcArray[randomItemIndex], enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 2, "image");
             EBS.speedY = spiralSpeedY;
             EBS.speedX = spiralSpeedX;
             if (spiral1Toggle) {
@@ -865,8 +866,13 @@ function mimicBehavior() {
                     followInterval = 0;
                 }
             } else if (mimicAttacks[mimicAttackIndex] == 1) {
+                try{
                 circleFire(mimic);
-                if (circleFireCtrl >= 400) {
+                }
+                catch(ex){
+                  alert(ex);
+                }
+              if (circleFireCtrl >= 400) {
                     mimicAttacking = false;
                     circleFireCtrl = 0;
                     followInterval = 0;
