@@ -38,7 +38,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 0;
+var level = 2;
 var portal = null;
 var d1;
 var d2;
@@ -180,6 +180,8 @@ var ball = {
 
 
 function startGame() {
+
+
     myGameArea.start();
     createGif(0, 0, "");
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
@@ -208,7 +210,7 @@ function removeFromAll(removed) {
 
 function createNoobBoss() {
     noobBoss = new component(170, 229, images.TheJackhammer, 650, 300, "image");
-    noobBoss.health = 600;
+    noobBoss.health = 1;
     noobBoss.isBoss = true;
     noobBoss.friendly = false;
     allGameElements.push(noobBoss);
@@ -294,6 +296,7 @@ function finalBossBehavior(){
 
             finalBoss = null;
          }
+         removeFromAll(itemChest);
     }
 }
 var mbCtrl = 0;
@@ -685,7 +688,10 @@ var itemProp = {
     width: 0,
     height: 0
 }
-var itemSrcArray = [images.SubremePowerupPickup, images.RavinRoboBoy, images.WackAssCryptocurrency, images.PortraitofYourMom]
+
+
+var itemSrcArray = [images.SubremePowerupPickup];
+console.log(itemSrcArray[0]);
 
 function defineItemWidth(iDex) {
     switch (iDex) {
@@ -714,7 +720,7 @@ function circleFire(enemynum) {
         for (var cc = 0; cc < 25; cc++) {
             var randomItemIndex = Math.floor(Math.random() * itemSrcArray.length);
             defineItemWidth(randomItemIndex);
-            EBS = new component(itemProp.width, itemProp.height, itemSrcArray[randomItemIndex], enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 2, "image");
+            EBS = new component(itemProp.width, itemProp.height, images.eval(itemSrcArray[randomItemIndex]), enemynum.x + enemynum.width / 2, enemynum.y + enemynum.height / 2, "image");
             EBS.speedY = spiralSpeedY;
             EBS.speedX = spiralSpeedX;
             if (spiral1Toggle) {
@@ -1145,9 +1151,22 @@ function jumpRage(subject) {
                                     sBY = roundTo(Math.random() * 7, 2) + 3;
                                     sBY *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
                                 }
-                                srcIndex = Math.floor(roundTo(Math.random() * 3));
-                                sprayBullets = new component(20, 20, jumpSrcs[srcIndex], (subject.x + (subject.width / 2)), subject.y + subject.height, "image");
+                                srcIndex = Math.floor(Math.random() * 4);
+                                sprayBullets = new component(20, 20, "", (subject.x + (subject.width / 2)), subject.y + subject.height, "image");
+                                switch(srcIndex){
+                                    case 0:
+                                        sprayBullets.color = images.EarthFragment01;
+                                        break;
+                                    case 1:
+                                        sprayBullets.color = images.EarthFragment02;
+                                        break;
+                                    case 2:
+                                        sprayBullets.color = images.EarthFragment03;
+                                        break;
+                                    default:
+                                        sprayBullets.color = images.EarthFragment04;
 
+                                }
                                 sprayBullets.speedX = sBX;
                                 sprayBullets.speedY = sBY;
                                 sprayBulletsArray.push(sprayBullets);
