@@ -212,7 +212,7 @@ function removeFromAll(removed) {
 
 function createNoobBoss() {
     noobBoss = new component(170, 229, images.TheJackhammer, 650, 300, "image");
-    noobBoss.health = 1;
+    noobBoss.health = 600;
     noobBoss.isBoss = true;
     noobBoss.friendly = false;
     allGameElements.push(noobBoss);
