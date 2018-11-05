@@ -38,7 +38,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 2;
+var level = 0;
 var portal = null;
 var d1;
 var d2;
