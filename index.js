@@ -182,11 +182,14 @@ var ball = {
 
 function startGame() {
 
-
     myGameArea.start();
     createGif(0, 0, "");
+    heart = new component2(210, 48, images.GucciGaygeFull, 20, 20, "image");
+
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
     player = new component(70, 58.45, images.PlayerSprite, 450, 200, "image");
+    bbBar = new component2(500, 7, images.BossHealthBarNonspecific, 150,450, "images");
+
     itemSrcArray = [images.SubremePowerupPickup, images.RavinRoboBoy, images.WackAssCryptocurrency, images.PortraitofYourMom];
     allGameElements.push(portal);
     document.getElementById("staticElements").style.opacity = 1;
@@ -1884,6 +1887,7 @@ var fps = 50;
 
 function updateGameArea() {
     myGameArea.clear();
+    updatehearts();
     if (player.x >= 400) {
         scrollX = player.x - 400;
     } else {
@@ -1928,6 +1932,7 @@ function updateGameArea() {
         getItem(correspondItem());
     }
     requestAnimationFrame(updateGameArea);
+
 
 }
 

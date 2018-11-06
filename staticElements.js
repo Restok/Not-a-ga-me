@@ -1,6 +1,5 @@
 var canv = document.getElementById("staticElements");
 var contx = canv.getContext("2d");
-
 class component2{
   constructor(width, height, color, x, y, type){
     this.color = color;
@@ -28,7 +27,7 @@ class component2{
     contx.globalCompositeOperation="destination-over";
 
       if (this.type == "image") {
-        contx.drawImage(this.image, 
+        contx.drawImage(this.color, 
         this.x, 
         this.y,
         this.width, this.height);
@@ -63,8 +62,6 @@ class component2{
         return crash;
     }   
 }
-heart = new component2(210, 48, "assets/Gucci Gayge Full.png", 20, 20, "image");
-
 function updateBossHealth(badGuy){
 	bossHealth.width -= (bossHealth.width/badGuy.health);
 }
@@ -75,22 +72,22 @@ function clearBoard() {
 function setHealth(){
     switch(player.health){
     case 5:
-      heart.image.src = "assets/Gucci Gayge 5_6.png"
+      heart.color = images.GucciGayge5_6;
       break;
     case 4:
-      heart.image.src = "assets/Gucci Gayge 4_6.png"
+      heart.color = images.GucciGayge4_6;
       break;
     case 3:
-      heart.image.src = "assets/Gucci Gayge 3_6.png"
+      heart.color = images.GucciGayge3_6;
       break;
     case 2:
-      heart.image.src = "assets/Gucci Gayge 2_6.png"
+      heart.color = images.GucciGayge2_6;
       break;
     case 1:
-      heart.image.src = "assets/Gucci Gayge 1_6.png"
+      heart.color = images.GucciGayge1_6;
       break;
     case 0:
-      heart.image.src = "assets/Dead Gayge.png"
+      heart.color = images.deadGayge;
       break;
   }
 }
@@ -101,8 +98,6 @@ function updatehearts(){
 	clearBoard();
 	heart.update();
   bossHealth.update();
-  requestAnimationFrame(updatehearts)
 
 }
-requestAnimationFrame(updatehearts)
 
