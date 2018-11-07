@@ -87,17 +87,17 @@ function setHealth(){
       heart.color = images.GucciGayge1_6;
       break;
     case 0:
-      heart.color = images.deadGayge;
+      heart.color = images.DeadGayge;
       break;
   }
 }
-		bossHealth = new component2(494, 3, "green", 150, 450, "a");
+		bossHealth = new component2(494, 3, "green", 153, 452, "a");
 
 
 function updatehearts(){
 	clearBoard();
 	heart.update();
   bossHealth.update();
-
+  bbBar.update();
 }
 

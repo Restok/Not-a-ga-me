@@ -38,7 +38,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 0;
+var level = 3;
 var portal = null;
 var d1;
 var d2;
@@ -82,6 +82,7 @@ var sources = {
     FinalBoss:'assets/FinalBoss.png',
     FinalBossCensored:'assets/FinalBossCensored.png',
     FinalBossCensoredFR:'assets/FinalBossCensoredFR.png',
+    FinalBossCensoredSquint:'assets/FinalBossCensoredSquint.png',
     GoButtonCloseButton:'assets/Go Button (Close Button).png',
     grungeBG:'assets/grungeBG.png',
     GucciGayge1_6:'assets/Gucci Gayge 1_6.png',
@@ -188,7 +189,7 @@ function startGame() {
 
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
     player = new component(70, 58.45, images.PlayerSprite, 450, 200, "image");
-    bbBar = new component2(500, 7, images.BossHealthBarNonspecific, 150,450, "images");
+    bbBar = new component2(500, 7, images.BossHealthBarNonspecific, 150,450, "image");
 
     itemSrcArray = [images.SubremePowerupPickup, images.RavinRoboBoy, images.WackAssCryptocurrency, images.PortraitofYourMom];
     allGameElements.push(portal);
@@ -225,7 +226,7 @@ function createNoobBoss() {
 
 function createFinalBoss(){
     finalBoss = new component(300, 300, images.FinalBossCensored, 650, 300, "image");
-    finalBoss.health = 1000;
+    finalBoss.health = 1;
     finalBoss.isBoss = true;
     finalBoss.friendly = false;
     allGameElements.push(finalBoss);
@@ -296,14 +297,53 @@ function finalBossBehavior(){
 
     }
     else{
-        universalBossDeath(finalBoss, true);
-         if (destroyBoss) {
+        finalBoss.speedX = 0;
+        finalBoss.speedY = 0;
+        createMimic = false;
+        timeUntilGone += 1;
+        finalBoss.x = 750-finalBoss.width/2;
+        finalBoss.y = 400-finalBoss.height/2;
+        if(timeUntilGone >= 100){
+            finalBoss.color = images.FinalBossCensoredSquint;
+            if(timeUntilGone == 100 || timeUntilGone == 140 || timeUntilGone == 170)
+                finalBoss.x+=10;
+            else if(timeUntilGone == 110 || timeUntilGone == 150 || timeUntilGone == 180)
+                finalBoss.x -=20;
+            
+    
+        }
+            if(timeUntilGone <= 450){
+                iHaveNoClueX = 400-finalBoss.width/2;
+                iHaveNoClueY = 200-finalBoss.height/2;
+                scrollWrapper(350, 200);
+                player.x = 400;
+                player.y = 300;
+            }
+            else if(timeUntilGone > 450){
+    
+                player.x = 400;
+                player.y = 300;
+                allGameElements.push(itemChest);
+                spawnOne = false;
+                removeFromAll(finalBoss);
 
-            finalBoss = null;
-         }
+                finalBoss = null;
+                destroyBoss = true;
+            }
+            if(!created){
+    
+                    $('#dddeath').css('position', 'absolute');
+                    $('#dddeath').css('top', iHaveNoClueY); //or wherever you want it
+    
+                    $('#dddeath').css('opacity', 1); //or wherever you want it
+                    $('#dddeath').css('left', iHaveNoClueX); //or wherever you want it
+                    resetGif(finalBoss.width+20, finalBoss.height+20, "assets/death/deathbreak.gif")
+                    created = true;
+                }
+    
+        }
          removeFromAll(itemChest);
     }
-}
 var mbCtrl = 0;
 var spdgBullets = [];
 var speedxar = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6];
@@ -398,8 +438,8 @@ function setLevel() {
             removeFromAll(portal);
             portal = null;
             supullets = [];
-            bossHealth = new component2(494, 3, "green", 150, 450, "a");
-            createPopUp("assets/BIGNIBBA.jpg", "cutScene");
+            bossHealth = new component2(494, 3, "green", 153, 452, "a");
+            createPopUp("assets/vsboss1.gif", "cutScene");
             $('#close').on("click", function() {
                 $('#close').hide();
                 $('#setting').fadeOut(1000, function() {
@@ -423,7 +463,7 @@ function setLevel() {
             removeFromAll(itemChest);
             portal = null;
             itemChest = null;
-            bossHealth = new component2(494, 3, "green", 150, 450, "a");
+            bossHealth = new component2(494, 3, "green", 153, 452, "a");
             createPopUp("assets/BIGNIBBA.jpg", "cutScene");
             $('#close').on("click", function() {
                 $('#close').hide();
@@ -449,7 +489,7 @@ function setLevel() {
             removeFromAll(itemChest);
             portal = null;
             itemChest = null;
-            bossHealth = new component2(494, 3, "green", 150, 450, "a");
+            bossHealth = new component2(494, 3, "green", 153, 452, "a");
             createPopUp("assets/BIGNIBBA.jpg", "cutScene");
             $('#close').on("click", function() {
 
@@ -479,7 +519,7 @@ function setLevel() {
             removeFromAll(itemChest);
             portal = null;
             itemChest = null;
-            bossHealth = new component2(494, 3, "green", 150, 450, "a");
+            bossHealth = new component2(494, 3, "green", 153, 452, "a");
             createPopUp("assets/BIGNIBBA.jpg", "cutScene");
             $('#close').on("click", function() {
 
@@ -552,8 +592,8 @@ function itemMoveOutOfChest(subject) {
 }
 
 
-function resetGif(w, h) {
-    document.getElementById("dddeath").src = "assets/death/death.gif";
+function resetGif(w, h, src) {
+    document.getElementById("dddeath").src = src;
     document.getElementById("dddeath").width = w;
     document.getElementById("dddeath").height = h;
 }
@@ -897,7 +937,7 @@ function mimicBehavior() {
 }
 
 function spawnMimic() {
-    bossHealth = new component2(494, 3, "green", 150, 450, "a");
+    bossHealth = new component2(494, 3, "green", 153, 452, "a");
 
     removeFromAll(itemChest)
     itemChest = null;

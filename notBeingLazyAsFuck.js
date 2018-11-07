@@ -37,7 +37,7 @@ function universalBossDeath(bossName, alreadyCreatedGif){
 
                 $('#dddeath').css('opacity', 1); //or wherever you want it
                 $('#dddeath').css('left', iHaveNoClueX); //or wherever you want it
-                resetGif(bossName.width+20, bossName.height+20, "")
+                resetGif(bossName.width+20, bossName.height+20, "assets/death/death.gif")
                 created = true;
             }
 

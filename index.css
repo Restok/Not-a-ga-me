@@ -11,10 +11,10 @@
 }
 .closeButton{
 	position: absolute;
-	top: 150px;
+	top: 250px;
 	width: 325px;
 	height: 82px;
-	left:275px;
+	left:200px;
 	margin:0;
 	background-image: url("assets/Go Button (Close Button).png");
 	background-position: center;
