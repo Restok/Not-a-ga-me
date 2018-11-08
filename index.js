@@ -52,6 +52,7 @@ var noobMinions = [];
 var minion = null;
 var noobPet = null;
 var noobBoss = null;
+var finalfinalBoss = null;
 var spinny = null;
 var mimicBullets = [];
 var waitToLoad = [];
@@ -79,6 +80,7 @@ var sources = {
     FinalBossTheEasterBunny:'assets/Final Boss (The Easter Bunny).png',
     FinalFINALBossMK69VirginDefenseSystemFiring:'assets/Final FINAL Boss (MK69 Virgin Defense System) (Firing).png',
     FinalFINALBossMK69VirginDefenseSystemNotFiring:'assets/Final FINAL Boss (MK69 Virgin Defense System) (Not Firing).png',
+    FinalFINALBossMK69VirginDefenseSystemNotFiringCensored:'assets/Final FINAL Boss (MK69 Virgin Defense System) (Not Firing)Censored.png',
     FinalBoss:'assets/FinalBoss.png',
     FinalBossCensored:'assets/FinalBossCensored.png',
     FinalBossCensoredFR:'assets/FinalBossCensoredFR.png',
@@ -224,6 +226,35 @@ function createNoobBoss() {
     allGameElements.push(spinny);
 }
 
+function createMK69(){
+    finalfinalBoss = new component(660, 750, images.FinalFINALBossMK69VirginDefenseSystemNotFiringCensored, 1500-616, 25, "image");
+    finalfinalBoss.health = 3000;
+    finalfinalBoss.isBoss = true;
+    finalfinalBoss.friendly = false;
+    allGameElements.push(finalfinalBoss);
+}
+
+function mk69Behavior(){
+    droppinBullets();
+}
+var bsize = 0;
+var bx = 0;
+var bspdy = 0;
+var bulletDrops = [];
+var dropCount = 0;
+function droppinBullets(){
+    if(dropCount%35==0){
+        size = Math.floor(Math.random()*70)+100;
+        bx = Math.floor(Math.random()*500)- 250;
+
+        bulletDrop = new component(size, size, "red", bx+player.x, -50, "a");
+        bspdy = Math.floor(Math.random()*3)+4;
+        bulletDrop.speedY = bspdy;
+        bulletDrops.push(bulletDrop);
+    }
+    dropCount++;
+}
+
 function createFinalBoss(){
     finalBoss = new component(300, 300, images.FinalBossCensored, 650, 300, "image");
     finalBoss.health = 1;
@@ -325,6 +356,8 @@ function finalBossBehavior(){
                 player.y = 300;
                 allGameElements.push(itemChest);
                 spawnOne = false;
+                createMK69();
+
                 removeFromAll(finalBoss);
 
                 finalBoss = null;
@@ -342,7 +375,7 @@ function finalBossBehavior(){
                 }
     
         }
-         removeFromAll(itemChest);
+        removeFromAll(itemChest);
     }
 var mbCtrl = 0;
 var spdgBullets = [];
@@ -527,7 +560,7 @@ function setLevel() {
                 $('#setting').fadeOut(1000, function() {
 
                     created = false;
-                    createFinalBoss();
+                    createMK69();
                     player.x = 100;
                     player.y = 100;
                     level += 1;
@@ -1899,11 +1932,14 @@ function updateEverything() {
     }
     disappearWhenTouchingWall(spdgBullets);
     disappearWhenTouchingWall(mimicBullets);
+    for (var b = 0; b < bulletDrops.length; b += 1) {
+        bulletDrops[b].newPos();
+        bulletDrops[b].update();
+    }
     for (var b = 0; b < massiveBulletArray.length; b += 1) {
         massiveBulletArray[b].newPos();
         massiveBulletArray[b].update();
     }
-
     if (level == 3) {
         for (x = 0; x < noobMinions.length; x++) {
 
@@ -1967,6 +2003,9 @@ function updateGameArea() {
     if (finalBoss !== null) {
         finalBossBehavior();
         
+    }
+    if(finalfinalBoss !== null){
+        mk69Behavior();
     }
     if(!gotItem){
         getItem(correspondItem());
