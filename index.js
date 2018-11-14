@@ -235,7 +235,7 @@ function createMK69(){
 }
 
 function mk69Behavior(){
-    droppinBullets();
+    trackingBullets();
 }
 var bsize = 0;
 var bx = 0;
@@ -253,6 +253,24 @@ function droppinBullets(){
         bulletDrops.push(bulletDrop);
     }
     dropCount++;
+}
+var tbullets = [];
+var fireCounter= 0;
+function trackingBullets(){
+    if(fireCounter > 70){
+        tbullet = new component(60, 60, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2 );
+        tbullets.push(tbullet);
+        fireCounter =0;
+    }
+    else{
+        fireCounter++;
+    }
+    for(var i = 0; i<tbullets.length;i++){
+        if(tbullets[i].internalCounter<100){
+            followPlayer(tbullets[i],player, 7);
+            tbullets[i].internalCounter++;
+        }
+    }
 }
 
 function createFinalBoss(){
@@ -1629,6 +1647,7 @@ class component {
         this.Bitem = false;
         this.robot = false;
         this.health = 0;
+        this.internalCounter= 0;
     }
 
     update() {
@@ -1939,6 +1958,10 @@ function updateEverything() {
     for (var b = 0; b < massiveBulletArray.length; b += 1) {
         massiveBulletArray[b].newPos();
         massiveBulletArray[b].update();
+    }
+    for (var b = 0; b < tbullets.length; b += 1) {
+        tbullets[b].newPos();
+        tbullets[b].update();
     }
     if (level == 3) {
         for (x = 0; x < noobMinions.length; x++) {
