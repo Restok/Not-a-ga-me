@@ -161,13 +161,13 @@ function loadImages(sources, callback) {
     }
   }
 
-
 function circlePath(following) {
+
     circle.centerX = following.x + following.width / 2;
     circle.centerY = following.y + following.height / 2;
     spinny.x = circle.centerX + Math.cos(circle.angle) * circle.radius;
     spinny.y = circle.centerY + Math.sin(circle.angle) * circle.radius;
-    circle.angle += ball.speed;
+    circle.angle += 10;
 }
 
 var circle = {
@@ -233,9 +233,34 @@ function createMK69(){
     finalfinalBoss.friendly = false;
     allGameElements.push(finalfinalBoss);
 }
-
+var circleFireTimer = 0;
 function mk69Behavior(){
-    trackingBullets();
+    if(circleFireTimer>120){
+        alottacircles();
+        fireAngle = 0;
+        circleFireTimer =0;
+    }
+    circleFireTimer++;
+
+}
+var fireAngle = 0;
+var fireCircleRadius = 300;
+var circleBullets = [];
+var cSpeedX = 0;
+var cSpeedY = 0;
+function alottacircles(){
+    cSpeedX = Math.floor(Math.random()*-3)-3;
+    cSpeedY = Math.floor(Math.random()*10)-5;
+    while(fireAngle<180){
+        circleBullet = new component(20, 20, "red", finalfinalBoss.x+300, finalfinalBoss.y+(finalfinalBoss.height/2))
+        circleBullet.x += Math.cos(fireAngle) * fireCircleRadius;
+        circleBullet.y += Math.sin(fireAngle) * fireCircleRadius;
+        circleBullet.speedX = cSpeedX;
+        circleBullet.speedY = cSpeedY;
+        circleBullets.push(circleBullet);
+        fireAngle += 10;
+
+    }
 }
 var bsize = 0;
 var bx = 0;
@@ -1962,6 +1987,10 @@ function updateEverything() {
     for (var b = 0; b < tbullets.length; b += 1) {
         tbullets[b].newPos();
         tbullets[b].update();
+    }
+    for (var b = 0; b < circleBullets.length; b += 1) {
+        circleBullets[b].newPos();
+        circleBullets[b].update();
     }
     if (level == 3) {
         for (x = 0; x < noobMinions.length; x++) {
