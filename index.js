@@ -236,7 +236,7 @@ function createMK69(){
 var circleFireTimer = 0;
 function mk69Behavior(){
     if(circleFireTimer>120){
-        alottacircles();
+        alottacircles(1);
         fireAngle = 0;
         circleFireTimer =0;
     }
@@ -244,22 +244,34 @@ function mk69Behavior(){
 
 }
 var fireAngle = 0;
-var fireCircleRadius = 300;
+var fireCircleRadius = 50;
 var circleBullets = [];
 var cSpeedX = 0;
 var cSpeedY = 0;
-function alottacircles(){
+var tangentSpeedX  = 0;
+var tangentSpeedY = 0;
+var xLength = 0;
+var yLength = 0;
+var factor  = 0;
+function alottacircles(expandSpd){
     cSpeedX = Math.floor(Math.random()*-3)-3;
     cSpeedY = Math.floor(Math.random()*10)-5;
     while(fireAngle<180){
         circleBullet = new component(20, 20, "red", finalfinalBoss.x+300, finalfinalBoss.y+(finalfinalBoss.height/2))
-        circleBullet.x += Math.cos(fireAngle) * fireCircleRadius;
-        circleBullet.y += Math.sin(fireAngle) * fireCircleRadius;
+        circleBullet.x += Math.cos(fireAngle*(Math.PI/180)) * fireCircleRadius;
+        circleBullet.y += Math.sin(fireAngle*(Math.PI/180)) * fireCircleRadius;        
         circleBullet.speedX = cSpeedX;
         circleBullet.speedY = cSpeedY;
+        yLength = Math.sin((fireAngle*(Math.PI/180))) * fireCircleRadius;
+        xLength = Math.cos((fireAngle*(Math.PI/180))) * fireCircleRadius;
+        factor = (xLength+yLength)/expandSpd;
+        circleBullet.speedX+= xLength/factor;
+        circleBullet.speedY+= yLength/factor;
+        console.log(circleBullet.speedX);
+        console.log(circleBullet.speedY);
         circleBullets.push(circleBullet);
-        fireAngle += 10;
-
+        fireAngle += 5;
+        
     }
 }
 var bsize = 0;
