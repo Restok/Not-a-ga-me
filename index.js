@@ -233,18 +233,33 @@ function createMK69(){
     finalfinalBoss.friendly = false;
     allGameElements.push(finalfinalBoss);
 }
-var circleFireTimer = 0;
+var fireTimer = 0;
 function mk69Behavior(){
-    if(circleFireTimer>120){
-        alottacircles(1);
-        fireAngle = 0;
-        circleFireTimer =0;
+    // if(fireTimer>80){
+    //     alottacircles();
+    //     fireAngle = 0;
+    //     fireTimer =0;
+    // }
+    // fireTimer++;
+    if(fireTimer>80){
+        randomSpray();
+        fireTimer = 0;    
     }
-    circleFireTimer++;
+    trackEnemy(player,barrageBullets);
+    fireTimer++;
 
 }
+var barrageBullets = [];
+function randomSpray(){
+    barrageBullet = new component(20, 20, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2, "");
+    barrageBullet.speedX = Math.floor(Math.random()*-5)-5;
+    barrageBullet.speedY = Math.floor(Math.random()*20)-10;
+    barrageBullets.push(barrageBullet);
+}
+
+
 var fireAngle = 0;
-var fireCircleRadius = 50;
+var fireCircleRadius = 80;
 var circleBullets = [];
 var cSpeedX = 0;
 var cSpeedY = 0;
@@ -256,21 +271,22 @@ var factor  = 0;
 function alottacircles(expandSpd){
     cSpeedX = Math.floor(Math.random()*-3)-3;
     cSpeedY = Math.floor(Math.random()*10)-5;
-    while(fireAngle<180){
-        circleBullet = new component(20, 20, "red", finalfinalBoss.x+300, finalfinalBoss.y+(finalfinalBoss.height/2))
-        circleBullet.x += Math.cos(fireAngle*(Math.PI/180)) * fireCircleRadius;
-        circleBullet.y += Math.sin(fireAngle*(Math.PI/180)) * fireCircleRadius;        
-        circleBullet.speedX = cSpeedX;
-        circleBullet.speedY = cSpeedY;
+    while(fireAngle<360){
         yLength = Math.sin((fireAngle*(Math.PI/180))) * fireCircleRadius;
         xLength = Math.cos((fireAngle*(Math.PI/180))) * fireCircleRadius;
-        factor = (xLength+yLength)/expandSpd;
-        circleBullet.speedX+= xLength/factor;
-        circleBullet.speedY+= yLength/factor;
-        console.log(circleBullet.speedX);
-        console.log(circleBullet.speedY);
+
+        circleBullet = new component(20, 20, "red", finalfinalBoss.x+300, finalfinalBoss.y+(finalfinalBoss.height/2))
+        circleBullet.x += xLength;
+        circleBullet.y += yLength;
+        circleBullet.speedX = cSpeedX;
+        circleBullet.speedY = cSpeedY;
+        // factor = (Math.abs(xLength)+Math.abs(yLength))/expandSpd;
+
+        circleBullet.speedX+= xLength/50;
+        circleBullet.speedY+= yLength/50;
+
         circleBullets.push(circleBullet);
-        fireAngle += 5;
+        fireAngle += 30;
         
     }
 }
@@ -2004,6 +2020,10 @@ function updateEverything() {
         circleBullets[b].newPos();
         circleBullets[b].update();
     }
+    for (var b = 0; b < barrageBullets.length; b += 1) {
+        barrageBullets[b].newPos();
+        barrageBullets[b].update();
+    }
     if (level == 3) {
         for (x = 0; x < noobMinions.length; x++) {
 
@@ -2312,8 +2332,8 @@ function followPlayer(enemyName, target, speed) {
 
 
 }
-
-
+var trackTime = 0;
+var subPixelRendering = true;
 function trackEnemy(enemyName, trackArray) {
     if (enemyName !== null) {
         trackTime += 1;
