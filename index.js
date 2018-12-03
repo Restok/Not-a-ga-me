@@ -241,8 +241,8 @@ function mk69Behavior(){
     //     fireTimer =0;
     // }
     // fireTimer++;
-    if(fireTimer>80){
-        randomSpray();
+    if(fireTimer>60){
+        trackSpray();
         fireTimer = 0;    
     }
     trackEnemy(player,barrageBullets);
@@ -250,10 +250,41 @@ function mk69Behavior(){
 
 }
 var barrageBullets = [];
-function randomSpray(){
-    barrageBullet = new component(20, 20, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2, "");
-    barrageBullet.speedX = Math.floor(Math.random()*-5)-5;
-    barrageBullet.speedY = Math.floor(Math.random()*20)-10;
+function trackSpray(){
+    barrageBullet = new component(30, 30, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2, "");
+    var ydif = (player.y) - finalfinalBoss.y - finalfinalBoss.height / 1.7;
+    var xdif = (player.x) - finalfinalBoss.x - finalfinalBoss.width / 2;
+
+    //	MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
+    //	THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
+
+    if (ydif <= 0 && xdif >= 0) {
+        var multiplier = (xdif * -1 + ydif) / 5;
+    } else if (ydif >= 0 && xdif <= 0) {
+        var multiplier = (xdif + ydif * -1) / 5;
+    } else {
+        var multiplier = (xdif + ydif) / 5;
+    }
+
+    if (ydif <= 0 && xdif >= 0) {
+        barrageBullet.speedX = (-xdif / multiplier);
+        barrageBullet.speedY = (-ydif / multiplier);
+    } else if (xdif <= 0 && ydif <= 0) {
+        barrageBullet.speedX = (-xdif / multiplier);
+        barrageBullet.speedY = (-ydif / multiplier);
+    } else if (ydif >= 0 && xdif <= 0) {
+        barrageBullet.speedX = (-xdif / multiplier);
+        barrageBullet.speedY = (-ydif / multiplier);
+    } else if (ydif >= 0 && xdif >= 0) {
+        barrageBullet.speedX = (xdif / multiplier);
+        barrageBullet.speedY = (ydif / multiplier);
+    } else if (ydif = 0) {
+        barrageBullet.speedX = (-xdif / multiplier);
+        barrageBullet.speedY = (ydif / multiplier);
+    } else {
+        barrageBullet.speedX = (-xdif / multiplier);
+        barrageBullet.speedY = (-ydif / multiplier);
+    }
     barrageBullets.push(barrageBullet);
 }
 
@@ -268,7 +299,7 @@ var tangentSpeedY = 0;
 var xLength = 0;
 var yLength = 0;
 var factor  = 0;
-function alottacircles(expandSpd){
+function alottacircles(){
     cSpeedX = Math.floor(Math.random()*-3)-3;
     cSpeedY = Math.floor(Math.random()*10)-5;
     while(fireAngle<360){
@@ -1975,6 +2006,7 @@ function updateEverything() {
     bossPetBehavior(petDirection, mimicPet, 60, 0);
     disappearWhenTouchingWall(enemyBullets)
     disappearWhenTouchingWall(massiveBulletArray);
+    disappearWhenTouchingWall(barrageBullets);
     if (level == 1) {
         for (i = 0; i < enemyBullets.length; i += 1) {
             enemyBullets[i].newPos();
@@ -2333,7 +2365,7 @@ function followPlayer(enemyName, target, speed) {
 
 }
 var trackTime = 0;
-var subPixelRendering = true;
+var subPixelRendering = false;
 function trackEnemy(enemyName, trackArray) {
     if (enemyName !== null) {
         trackTime += 1;
@@ -2344,7 +2376,7 @@ function trackEnemy(enemyName, trackArray) {
 
             //  MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
             //  THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
-            if (trackTime % 50 == 0 || subPixelRendering) {
+            if (trackTime % 10 == 0 || subPixelRendering) {
                 if (Math.abs(xLen) + Math.abs(yLen) < 500) {
                     if (yLen <= 0 && xLen >= 0) {
                         multiplier3 = (xLen * -1 + yLen) / 5;
