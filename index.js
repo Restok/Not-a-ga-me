@@ -60,6 +60,7 @@ var i;
 var finalBoss = null;
 var itemSrcArray = [];
 var massiveBulletArray = [];
+var allTheEnemyBullets = [];
 var sources = {
     WackAssCryptocurrency:'assets/Wack Ass Cryptocurrency.png',
     BIGNIBBA:'assets/BIGNIBBA.jpg',
@@ -285,9 +286,17 @@ function trackSpray(){
         barrageBullet.speedX = (-xdif / multiplier);
         barrageBullet.speedY = (-ydif / multiplier);
     }
-    barrageBullets.push(barrageBullet);
+    allTheEnemyBullets.push(barrageBullet);
 }
 
+function fullOnBlast(){
+    blast = new component(20, 20, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2, "");
+    blast.speedX = Math.floor(Math.random()*-5)-5;
+    blast.speedY = Math.floor(Math.random()*10)-10;
+    b
+    
+
+}
 
 var fireAngle = 0;
 var fireCircleRadius = 80;
@@ -316,7 +325,7 @@ function alottacircles(){
         circleBullet.speedX+= xLength/50;
         circleBullet.speedY+= yLength/50;
 
-        circleBullets.push(circleBullet);
+        allTheEnemyBullets.push(circleBullet);
         fireAngle += 30;
         
     }
@@ -334,7 +343,7 @@ function droppinBullets(){
         bulletDrop = new component(size, size, "red", bx+player.x, -50, "a");
         bspdy = Math.floor(Math.random()*3)+4;
         bulletDrop.speedY = bspdy;
-        bulletDrops.push(bulletDrop);
+        allTheEnemyBullets.push(bulletDrop);
     }
     dropCount++;
 }
@@ -343,7 +352,7 @@ var fireCounter= 0;
 function trackingBullets(){
     if(fireCounter > 70){
         tbullet = new component(60, 60, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2 );
-        tbullets.push(tbullet);
+        allTheEnemyBullets.push(tbullet);
         fireCounter =0;
     }
     else{
@@ -371,9 +380,8 @@ var fbAttackIndex = 0;
 var fbAttackIndexAr = [0,1];
 
 function finalBossBehavior(){
-    bulletsDamage(player, massiveBulletArray, 2);
-    bulletsDamage(player, spdgBullets, 1);
-    bulletsDamage(finalBoss, supullets, 1);
+    bulletsDamage(player, allTheEnemyBullets);
+    bulletsDamage(finalBoss, supullets);
     fbisAlive = finalBoss.health > 0 ? true:false;
     if(fbisAlive){
         if(player.x<(finalBoss.x+finalBoss.width/2)){
@@ -496,19 +504,19 @@ function sprayDiagonal(boss){
         spdgBullet = new component(20, 20 ,"red", bossx, boss.y + boss.height/2, "");
         spdgBullet.speedX = speedxar[countBullets%speedxar.length];
         spdgBullet.speedY = speedyar[countBullets%speedyar.length];
-        spdgBullets.push(spdgBullet);
+        allTheEnemyBullets.push(spdgBullet);
         spdgBullet = new component(20, 20 ,"red", bossx, boss.y + boss.height/2, "");
         spdgBullet.speedX = speedxar[countBullets2%speedxar.length];
         spdgBullet.speedY = speedyar[countBullets2%speedyar.length];
-        spdgBullets.push(spdgBullet);
+        allTheEnemyBullets.push(spdgBullet);
         spdgBullet = new component(20, 20 ,"red", bossx, boss.y + boss.height/2, "");
         spdgBullet.speedX = speedxar[countBullets3%speedxar.length];
         spdgBullet.speedY = speedyar[countBullets3%speedyar.length];
-        spdgBullets.push(spdgBullet);
+        allTheEnemyBullets.push(spdgBullet);
         spdgBullet = new component(20, 20 ,"red", bossx, boss.y + boss.height/2, "");
         spdgBullet.speedX = speedxar[countBullets4%speedxar.length];
         spdgBullet.speedY = speedyar[countBullets4%speedyar.length];
-        spdgBullets.push(spdgBullet);
+        allTheEnemyBullets.push(spdgBullet);
 
         countBullets ++;
         countBullets2 ++;
@@ -561,8 +569,8 @@ function massiveBullet(enemynum, bSpeed) {
         enemyBullet.speedX = (-xdif / multiplier);
         enemyBullet.speedY = (-ydif / multiplier);
     }
-    
-    massiveBulletArray.push(enemyBullet);
+    enemyBullet.damage = 2;
+    allTheEnemyBullets.push(enemyBullet);
 
 }
 
@@ -831,10 +839,10 @@ function immunity(numOfFrames, frameVar) {
     }
 }
 
-function bulletsDamage(subject, damager, damage) {
+function bulletsDamage(subject, damager) {
     for (i = 0; i < damager.length; i++) {
         if (damager[i].crashWith(subject)) {
-            subject.health -= damage;
+            subject.health -= damager[i].damage;
             damager[i] = null;
             damager.splice(i, 1)
             if (subject.friendly) {
@@ -935,7 +943,7 @@ function circleFire(enemynum) {
                 spiral4Toggle = false;
                 spiral1Toggle = true;
             }
-            mimicBullets.push(EBS);
+            allTheEnemyBullets.push(EBS);
         }
     }
 }
@@ -995,10 +1003,10 @@ function burstFire(enemynum) {
         enemyBullet2.speedY = enemyBullet.speedY - 2
         enemyBullet3.speedX = enemyBullet.speedX - 2
         enemyBullet3.speedY = enemyBullet.speedY + 2
-        mimicBullets.push(enemyBullet);
-        mimicBullets.push(enemyBullet2);
+        allTheEnemyBullets.push(enemyBullet);
+        allTheEnemyBullets.push(enemyBullet2);
 
-        mimicBullets.push(enemyBullet3);
+        allTheEnemyBullets.push(enemyBullet3);
     }
 }
 var mimicAttacks = [0, 1];
@@ -1013,8 +1021,8 @@ var destroyBoss = false;
 function mimicBehavior() {
     mimic.health <= 0 ? mimicIsAlive = false : mimicIsAlive = true;
     if (mimicIsAlive) {
-        bulletsDamage(player, mimicBullets, 1)
-        bulletsDamage(mimic, supullets, 1)
+        bulletsDamage(player, allTheEnemyBullets)
+        bulletsDamage(mimic, supullets)
         if (!mimicAttacking) {
             followInterval += 1;
             chooseAttackInterval += 1;
@@ -1132,13 +1140,8 @@ function boss2Behavior() {
     }
 
     if (boss2IsAlive) {
-        bulletsDamage(player, sprayBulletsArray, 1);
-        if (player.Bitem) {
-            bulletsDamage(boss2, supullets, 1.3);
-        } else {
-            bulletsDamage(boss2, supullets, 1);
-
-        }
+        bulletsDamage(player, allTheEnemyBullets);
+        bulletsDamage(boss2, supullets);
     }
     if (boss2IsAlive && boss2.health > 100) {
         if (!Boss2Attacking) {
@@ -1276,7 +1279,7 @@ function jump(subject) {
                                 }
                                 sprayBullets.speedX = sBX;
                                 sprayBullets.speedY = sBY;
-                                sprayBulletsArray.push(sprayBullets);
+                                allTheEnemyBullets.push(sprayBullets);
 
                             }
                             boss2.color = images.Boss2MedicatedMushroomchargeup;
@@ -1353,7 +1356,7 @@ function jumpRage(subject) {
                                 }
                                 sprayBullets.speedX = sBX;
                                 sprayBullets.speedY = sBY;
-                                sprayBulletsArray.push(sprayBullets);
+                                allTheEnemyBullets.push(sprayBullets);
                             }
                             goUp = true;
                             sprayOnce = false;
@@ -1556,8 +1559,7 @@ function enemyFireSpiral(enemynum) {
             spiral4Toggle = false;
             spiral1Toggle = true;
         }
-        enemyBulletSpiral.push(EBS);
-        scrollElements.push(EBS);
+        allTheEnemyBullets.push(EBS);
 
     }
 
@@ -1621,7 +1623,7 @@ function enemyFire(enemynum) {
             enemyBullet.speedX = (-xdif / multiplier);
             enemyBullet.speedY = (-ydif / multiplier);
         }
-        enemyBullets.push(enemyBullet);
+        allTheEnemyBullets.push(enemyBullet);
 
     }
     fireCtrl += 1;
@@ -1732,6 +1734,7 @@ class component {
         this.robot = false;
         this.health = 0;
         this.internalCounter= 0;
+        this.damage = 1;
     }
 
     update() {
@@ -1911,14 +1914,9 @@ function boss1Behavior() {
         var indexnum = Math.floor(roundTo(Math.random()))
         Boss1Action = Boss1Atk[indexnum]
     }
-    if (player.Bitem == false) {
-        bulletsDamage(enemy, supullets, 1)
-    } else {
-        bulletsDamage(enemy, supullets, 1.3)
 
-    }
-    bulletsDamage(player, enemyBullets, 1)
-    bulletsDamage(player, enemyBulletSpiral, 1)
+    bulletsDamage(enemy, supullets);
+    bulletsDamage(player, allTheEnemyBullets);
     }
 }
 
@@ -1943,11 +1941,12 @@ function collisionDamage(enemyName, target, frameVar) {
 var spawnCount = 0;
 
 function noobMinionBehavior() {
-    bulletsDamage(player, noobMinions, 1);
+    bulletsDamage(player, allTheEnemyBullets);
+    bulletsDamage(player, noobMinions);
 
     for (var j = 0; j < noobMinions.length; j++) {
         followPlayer(noobMinions[j], player, Math.floor(Math.random() * 3) + 5);
-        bulletsDamage(noobMinions[j], supullets, player.Bitem ? 1.3 : 1);
+        bulletsDamage(noobMinions[j], supullets);
 
         if (noobMinions[j].health <= 0) {
             noobMinions[j] = null;
@@ -1973,8 +1972,8 @@ function noobBossBehavior() {
         followPlayer(noobBoss, player, 2);
         collisionDamage(noobBoss, player, immunityFrame);
         collisionDamage(spinny, player, immunityFrame2);
-        bulletsDamage(noobBoss, supullets, (player.Bitem) ? 1.3 : 1)
-        bulletsDamage(spinny, supullets, 0);
+        bulletsDamage(noobBoss, supullets)
+        bulletsDamage(spinny, supullets);
         noobBoss.health <= 0 ? noobBossIsAlive = false : noobBossIsAlive = true;
         if (minion !== null) {
             noobMinionBehavior()
@@ -2004,75 +2003,21 @@ function updateEverything() {
     bossPetBehavior(petDirection, boss2Pet, 20, 0);
     bossPetBehavior(petDirection, noobPet, 40, 0);
     bossPetBehavior(petDirection, mimicPet, 60, 0);
-    disappearWhenTouchingWall(enemyBullets)
-    disappearWhenTouchingWall(massiveBulletArray);
-    disappearWhenTouchingWall(barrageBullets);
-    if (level == 1) {
-        for (i = 0; i < enemyBullets.length; i += 1) {
-            enemyBullets[i].newPos();
-            enemyBullets[i].update();
-        }
-    disappearWhenTouchingWall(enemyBulletSpiral)
-        for (i = 0; i < enemyBulletSpiral.length; i += 1) {
-            enemyBulletSpiral[i].newPos();
-            enemyBulletSpiral[i].update();
-        }
-    }
+    disappearWhenTouchingWall(allTheEnemyBullets)
     disappearWhenTouchingWall(supullets);
     // trackEnemy(enemy, supullets)
 
-    for (i = 0; i < supullets.length; i += 1) {
-        supullets[i].newPos();
-        supullets[i].update();
-    }
-    for (var b = 0; b < mimicBullets.length; b += 1) {
-        mimicBullets[b].newPos();
-        mimicBullets[b].update();
-    }
-    disappearWhenTouchingWall(mimicBullets);
-    for (var b = 0; b < spdgBullets.length; b += 1) {
-        spdgBullets[b].newPos();
-        spdgBullets[b].update();
-    }
-    disappearWhenTouchingWall(spdgBullets);
-    disappearWhenTouchingWall(mimicBullets);
-    for (var b = 0; b < bulletDrops.length; b += 1) {
-        bulletDrops[b].newPos();
-        bulletDrops[b].update();
-    }
-    for (var b = 0; b < massiveBulletArray.length; b += 1) {
-        massiveBulletArray[b].newPos();
-        massiveBulletArray[b].update();
-    }
-    for (var b = 0; b < tbullets.length; b += 1) {
-        tbullets[b].newPos();
-        tbullets[b].update();
-    }
-    for (var b = 0; b < circleBullets.length; b += 1) {
-        circleBullets[b].newPos();
-        circleBullets[b].update();
-    }
-    for (var b = 0; b < barrageBullets.length; b += 1) {
-        barrageBullets[b].newPos();
-        barrageBullets[b].update();
-    }
-    if (level == 3) {
-        for (x = 0; x < noobMinions.length; x++) {
+    for (x = 0; x < noobMinions.length; x++) {
 
-            noobMinions[x].newPos();
-            noobMinions[x].update();
-        }
+        noobMinions[x].newPos();
+        noobMinions[x].update();
     }
 
-    if (level == 2) {
-
-        disappearWhenTouchingWall(sprayBulletsArray);
-
-        for (i = 0; i < sprayBulletsArray.length; i += 1) {
-            sprayBulletsArray[i].newPos();
-            sprayBulletsArray[i].update();
-        }
+    for (i = 0; i < allTheEnemyBullets.length; i += 1) {
+        allTheEnemyBullets[i].newPos();
+        allTheEnemyBullets[i].update();
     }
+
 }
 
 var fps = 50;
@@ -2143,17 +2088,18 @@ function getItem(item) {
             }
             if (correspondItem() == dmg) {
                 player.Bitem = true;
+                supullets.damage = 1.3;
                 itemAcquired(images.BAcquired);
                 gotItem = true;
 
                 $("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function() {
                     $("#itemScreen").remove();
-                });
+                });.Bitem
 
 
-                bulletsNumber += 1;
-            } else if (correspondItem() == mspd) {
-                player.robot = true;
+                bul.Bitem
+            } else .Bitem
+                pla.Bitem
                 playerMovementSpeed = 6;
                 bulletsNumber += 1;
                 itemAcquired(images.robotAcquired);
@@ -2361,8 +2307,6 @@ function followPlayer(enemyName, target, speed) {
         }
 
     }
-
-
 }
 var trackTime = 0;
 var subPixelRendering = false;
