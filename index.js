@@ -234,20 +234,61 @@ function createMK69(){
     finalfinalBoss.friendly = false;
     allGameElements.push(finalfinalBoss);
 }
+var attackTimer= 0;
 var fireTimer = 0;
+var mkAttacking = false;
+var mkAlive = true;
+var randomAttack = 0;
 function mk69Behavior(){
+    if(mkAlive){
+        if(!mkAttacking && attackTimer>400){
+            randomAttack = Math.floor(Math.random()*4);
+            mkAttacking = true;
+        }
+        if(mkAttacking && fireTimer < 1000){
+            switch(randomAttack){
+                case 0:
+                    droppinBullets();
+                    break;
+                case 1:
+                    if(fireTimer % 60  == 0){
+                        trackSpray();
+                    }
+                    break;
+
+                case 2:
+                    fullOnBlast();
+                    break;
+                default:
+                    if(fireTimer%80 == 0){
+                        alottacircles();
+                    }
+                    break;
+                }
+            fireTimer++;
+        }
+        else if(fireTimer >=800){
+            mkAttacking = false;
+            attackTimer = 0;
+            fireTimer = 0;
+            fireAngle = 0;
+        }
+        attackTimer++;
+    }
     // if(fireTimer>80){
     //     alottacircles();
     //     fireAngle = 0;
     //     fireTimer =0;
     // }
     // fireTimer++;
-    if(fireTimer>60){
-        trackSpray();
-        fireTimer = 0;    
-    }
-    trackEnemy(player,barrageBullets);
-    fireTimer++;
+    // if(fireTimer>60){
+    //     trackSpray();
+    //     fireTimer = 1; 
+    // }
+    // if(fireTimer>0){
+    //     trackEnemy(player, allTheEnemyBullets);
+    // }
+    // fireTimer++;
 
 }
 var barrageBullets = [];
@@ -288,14 +329,30 @@ function trackSpray(){
     }
     allTheEnemyBullets.push(barrageBullet);
 }
-
+var moveTimer = 0;
+var blastYMultiplier = -10;
+var goUp = true;
 function fullOnBlast(){
+    if(moveTimer %10==0){
+        if(goUp){
+            blastYMultiplier +=1;
+            if(blastYMultiplier >= 10){
+                goUp = false;
+            }
+        }
+        else{
+            blastYMultiplier -=1
+            if(blastYMultiplier <= -10){
+                goUp = true;
+            }
+        }
+    }
+    moveTimer++;
     blast = new component(20, 20, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2, "");
     blast.speedX = Math.floor(Math.random()*-5)-5;
-    blast.speedY = Math.floor(Math.random()*10)-10;
-    b
-    
+    blast.speedY = Math.floor(Math.random()*(blastYMultiplier))-blastYMultiplier*2;
 
+    allTheEnemyBullets.push(blast);
 }
 
 var fireAngle = 0;
@@ -2094,12 +2151,13 @@ function getItem(item) {
 
                 $("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function() {
                     $("#itemScreen").remove();
-                });.Bitem
+                });
+
+                bulletsNumber +=1;
 
 
-                bul.Bitem
-            } else .Bitem
-                pla.Bitem
+            } else if(correspondItem() == "mspd"){
+                player.robot = true;
                 playerMovementSpeed = 6;
                 bulletsNumber += 1;
                 itemAcquired(images.robotAcquired);
