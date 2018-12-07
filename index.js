@@ -2448,4 +2448,3 @@ function trackEnemy(enemyName, trackArray) {
         }
     }
 }
-
