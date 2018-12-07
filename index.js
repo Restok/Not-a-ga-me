@@ -239,42 +239,53 @@ var fireTimer = 0;
 var mkAttacking = false;
 var mkAlive = true;
 var randomAttack = 0;
+var timeToAttack = 0;
 function mk69Behavior(){
     if(mkAlive){
-        if(!mkAttacking && attackTimer>400){
-            randomAttack = Math.floor(Math.random()*4);
+        if(!mkAttacking && attackTimer>200){
+            randomAttack = 1;
             mkAttacking = true;
         }
-        if(mkAttacking && fireTimer < 1000){
-            switch(randomAttack){
-                case 0:
-                    droppinBullets();
-                    break;
-                case 1:
-                    if(fireTimer % 60  == 0){
-                        trackSpray();
+        if(mkAttacking){
+            
+            if(fireTimer==0 || fireTimer<timeToAttack){
+                fireTimer++;
+                switch(randomAttack){
+                    case 0:
+                        timeToAttack = 400;
+                        droppinBullets();
+                        break;
+                    case 1:
+                        timeToAttack = 800;
+                        if(fireTimer % 60  == 0){
+                            trackSpray();
+                        }
+                        trackEnemy(player, allTheEnemyBullets);
+                        break;
+                    case 2:
+                        timeToAttack = 200;
+                        fullOnBlast();
+                        break;
+                    default:
+                        timeToAttack = 600;
+                        if(fireTimer%80 == 0){
+                            alottacircles();
+                            fireAngle = 0;
+                        }
+                        break;
                     }
-                    break;
-
-                case 2:
-                    fullOnBlast();
-                    break;
-                default:
-                    if(fireTimer%80 == 0){
-                        alottacircles();
-                    }
-                    break;
                 }
-            fireTimer++;
+                else{
+                    mkAttacking = false;
+                    attackTimer = 0;
+                    fireTimer = 0;
+                    fireAngle = 0;
+                }
+            }
+            attackTimer++;
+
         }
-        else if(fireTimer >=800){
-            mkAttacking = false;
-            attackTimer = 0;
-            fireTimer = 0;
-            fireAngle = 0;
-        }
-        attackTimer++;
-    }
+
     // if(fireTimer>80){
     //     alottacircles();
     //     fireAngle = 0;
@@ -328,6 +339,7 @@ function trackSpray(){
         barrageBullet.speedY = (-ydif / multiplier);
     }
     allTheEnemyBullets.push(barrageBullet);
+
 }
 var moveTimer = 0;
 var blastYMultiplier = -10;
@@ -2063,7 +2075,11 @@ function updateEverything() {
     disappearWhenTouchingWall(allTheEnemyBullets)
     disappearWhenTouchingWall(supullets);
     // trackEnemy(enemy, supullets)
+    for (x = 0; x < supullets.length; x++) {
 
+        supullets[x].newPos();
+        supullets[x].update();
+    }
     for (x = 0; x < noobMinions.length; x++) {
 
         noobMinions[x].newPos();
@@ -2373,8 +2389,8 @@ function trackEnemy(enemyName, trackArray) {
         trackTime += 1;
 
         for (i = 0; i < trackArray.length; i++) {
-            var yLen = (trackArray[i].y) - enemyName.y - enemyName.height / 1.7;
-            var xLen = (trackArray[i].x) - enemyName.x - enemyName.width / 2;
+            var yLen = (trackArray[i].y) - enemyName.y + enemyName.height / 2;
+            var xLen = (trackArray[i].x) - enemyName.x + enemyName.width / 2;
 
             //  MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
             //  THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
