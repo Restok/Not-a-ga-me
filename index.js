@@ -229,7 +229,7 @@ function createNoobBoss() {
 
 function createMK69(){
     finalfinalBoss = new component(660, 750, images.FinalFINALBossMK69VirginDefenseSystemNotFiringCensored, 1500-616, 25, "image");
-    finalfinalBoss.health = 3000;
+    finalfinalBoss.health = 50;
     finalfinalBoss.isBoss = true;
     finalfinalBoss.friendly = false;
     allGameElements.push(finalfinalBoss);
@@ -241,9 +241,12 @@ var mkAlive = true;
 var randomAttack = 0;
 var timeToAttack = 0;
 function mk69Behavior(){
+    bulletsDamage(finalfinalBoss, supullets);
+    bulletsDamage(player, allTheEnemyBullets);
+    dontfuckingwalkonmk69();
     if(mkAlive){
         if(!mkAttacking && attackTimer>200){
-            randomAttack = 1;
+            randomAttack = Math.floor(Math.random()*4);
             mkAttacking = true;
         }
         if(mkAttacking){
@@ -252,11 +255,12 @@ function mk69Behavior(){
                 fireTimer++;
                 switch(randomAttack){
                     case 0:
-                        timeToAttack = 400;
+                        timeToAttack = 600;
                         droppinBullets();
                         break;
                     case 1:
                         timeToAttack = 800;
+                        trackEnemy(player,allTheEnemyBullets);
                         if(fireTimer % 60  == 0){
                             trackSpray();
                         }
@@ -283,9 +287,15 @@ function mk69Behavior(){
                 }
             }
             attackTimer++;
-
         }
-
+    if(finalfinalBoss.health<=0){
+        mkAlive = false;
+        universalBossDeath(finalfinalBoss);
+        if (destroyBoss) {
+        	destroyBoss = false;
+            finalfinalBoss = null;
+        }
+    }
     // if(fireTimer>80){
     //     alottacircles();
     //     fireAngle = 0;
@@ -300,12 +310,12 @@ function mk69Behavior(){
     //     trackEnemy(player, allTheEnemyBullets);
     // }
     // fireTimer++;
-
 }
+
 var barrageBullets = [];
 function trackSpray(){
     barrageBullet = new component(30, 30, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2, "");
-    var ydif = (player.y) - finalfinalBoss.y - finalfinalBoss.height / 1.7;
+    var ydif = (player.y) - finalfinalBoss.y - finalfinalBoss.height/1.5;
     var xdif = (player.x) - finalfinalBoss.x - finalfinalBoss.width / 2;
 
     //	MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
@@ -767,7 +777,7 @@ function correspondItem() {
     }
 }
 var itemIndex;
-var itemsArray = [0, 1];
+var itemsArray = [0, 1, 2];
 var itemChosen = -1;
 
 function spawnItems() {
@@ -792,7 +802,10 @@ function spawnItems() {
                 mspd = new component(60, 32.4, images.RavinRoboBoy, 725, 450, "image");
                 allGameElements.push(mspd);
                 break;
-        }
+            case 2:
+                explosion = new component(66.6, 16.3, images.WackAssCryptocurrency, 725, 450, "image");
+                allGameElements.push(explosion);
+            }
         spawnOne = true;
     }
 }
@@ -1159,7 +1172,21 @@ function spawnMimic() {
     mimic.health = bulletsNumber*100;
     allGameElements.push(mimic);
 }
+function dontfuckingwalkonmk69(){
+    if (player.crashWith(finalfinalBoss)) {
+        if (getPreviousPlayerPos) {
+            prevPlayerX = player.x;
+            prevPlayerY = player.y;
+            getPreviousPlayerPos = false;
+        } else {
+                player.x = prevPlayerX;
+                player.y = prevPlayerY;
+            }
 
+    } else {
+        getPreviousPlayerPos = true;
+    }
+}
 function dontfuckingwalkonchests() {
     if (itemChest !== null) {
         if (player.crashWith(itemChest)) {
@@ -1801,6 +1828,7 @@ class component {
         this.friendly = true;
         this.Bitem = false;
         this.robot = false;
+        this.explodeAmmo = false;
         this.health = 0;
         this.internalCounter= 0;
         this.damage = 1;
@@ -1850,36 +1878,42 @@ class component {
         return crash;
     }
 }
-
+var playerfireCount = 0;
 function shoot() {
-    supullet = new component(50, 50, images.SupremeAmmo, player.x + (player.width / 2), player.y, "image");
-    if (player.Bitem == true) {
-        supullet.color = images.SubremeAmmo;
-        B = new component(20, 20, images.SubremePowerupPickup, player.x + (player.width / 2), player.y + 30, "image")
-        supullets.push(B);
-        setSpeedArray.push(B);
+    if(player.explodeAmmo && playerfireCount %10 == 0){
+        explodeAmmo = new component(73, 102, images.WackAssCryptocurrencyBullet, player.x + player.width/2, player.y + player.height/2);
+        allGameElements.push(explodeAmmo);
     }
-    if (player.robot == true) {
-        notes = new component(20, 28, images.RoboBoyBullet, player.x + (player.width / 2), player.y - 15, "image")
-        supullets.push(notes);
-        setSpeedArray.push(notes);
-    }
-    supullets.push(supullet);
-    setSpeedArray.push(supullet);
-    if (boss2Pet !== null) {
-        b2Bullets = new component(10, 10, images.EarthFragment01, boss2Pet.x + 10, boss2Pet.y, "image");
-        supullets.push(b2Bullets);
-        setSpeedArray.push(b2Bullets);
-    }
-    if (noobPet !== null) {
-        npBullets = new component(10, 10, "red", noobPet.x, noobPet.y + 10);
-        supullets.push(npBullets);
-        setSpeedArray.push(npBullets);
-    }
-    if (mimicPet !== null) {
-        mpBullets = new component(10, 10, "red", mimicPet.x, mimicPet.y + 10);
-        supullets.push(mpBullets);
-        setSpeedArray.push(mpBullets);
+    else{
+        supullet = new component(50, 50, images.SupremeAmmo, player.x + (player.width / 2), player.y, "image");
+        if (player.Bitem == true) {
+            supullet.color = images.SubremeAmmo;
+            B = new component(20, 20, images.SubremePowerupPickup, player.x + (player.width / 2), player.y + 30, "image")
+            supullets.push(B);
+            setSpeedArray.push(B);
+        }
+        if (player.robot == true) {
+            notes = new component(20, 28, images.RoboBoyBullet, player.x + (player.width / 2), player.y - 15, "image")
+            supullets.push(notes);
+            setSpeedArray.push(notes);
+        }
+        supullets.push(supullet);
+        setSpeedArray.push(supullet);
+        if (boss2Pet !== null) {
+            b2Bullets = new component(10, 10, images.EarthFragment01, boss2Pet.x + 10, boss2Pet.y, "image");
+            supullets.push(b2Bullets);
+            setSpeedArray.push(b2Bullets);
+        }
+        if (noobPet !== null) {
+            npBullets = new component(10, 10, "red", noobPet.x, noobPet.y + 10);
+            supullets.push(npBullets);
+            setSpeedArray.push(npBullets);
+        }
+        if (mimicPet !== null) {
+            mpBullets = new component(10, 10, "red", mimicPet.x, mimicPet.y + 10);
+            supullets.push(mpBullets);
+            setSpeedArray.push(mpBullets);
+        }
     }
 }
 
@@ -2185,6 +2219,18 @@ function getItem(item) {
                 });
 
             }
+            else if(correspondItem() == "explosion"){
+                player.explodeAmmo = true;
+                bulletsNumber += 1;
+                itemAcquired(images.robotAcquired);
+                gotItem = true;
+
+                $("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function() {
+                    $("#itemScreen").remove();
+
+                });
+
+            }
         }
     }
 }
@@ -2290,7 +2336,9 @@ window.onkeyup = function(e) {
     if (key == '38') {
         shoot();
         setAllBulletSpeedY(-bulletsSpeed);
-
+        if(explodeAmmo !=null){
+            explodeAmmo.speedY = -bulletsSpeed;
+        }
         // if(boss2Pet!=null){
         //  b2Bullets.speedY = -bulletsSpeed;
         // }
