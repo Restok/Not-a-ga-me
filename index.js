@@ -841,7 +841,7 @@ function resetGif(w, h, src) {
 }
 
 var pParent = document.getElementById("popUpParent");
-
+var explodeParent = document.getElementById("explosions");
 function createExplosion(w, h){
     var exp = document.createElement("IMG");
     exp.setAttribute("src", "assets/explosion.gif");

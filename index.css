@@ -2,7 +2,9 @@
 	font-family: "pixel";
 	src: url(assets/fonts/pixelart.ttf);
 }
-
+#explosions{
+  position:absolute;
+}
 .popups{
 	position:absolute;
 	width:800px;
