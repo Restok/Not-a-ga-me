@@ -38,7 +38,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 3;
+var level = 0;
 var portal = null;
 var d1;
 var d2;
@@ -61,6 +61,7 @@ var finalBoss = null;
 var itemSrcArray = [];
 var massiveBulletArray = [];
 var allTheEnemyBullets = [];
+var explodeAmmo = null;
 var sources = {
     WackAssCryptocurrency:'assets/Wack Ass Cryptocurrency.png',
     BIGNIBBA:'assets/BIGNIBBA.jpg',
@@ -119,8 +120,6 @@ var sources = {
     WackAssCryptocurrencyBullet:'assets/Wack Ass Cryptocurrency Bullet.png',
     BAcquired: 'assets/BAcquired.png',
     robotAcquired: 'assets/robotAcquired.png',
-
-
 }
 
 // if (typeof console  != "undefined") 
@@ -188,6 +187,7 @@ function startGame() {
 
     myGameArea.start();
     createGif(0, 0, "");
+    createExplosion(200, 247)
     heart = new component2(210, 48, images.GucciGaygeFull, 20, 20, "image");
 
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
@@ -774,6 +774,10 @@ function correspondItem() {
         case 1:
             return mspd;
             break;
+        case 2:
+            console.log("returned");
+            return explosion;
+            break;
     }
 }
 var itemIndex;
@@ -788,7 +792,8 @@ function spawnItems() {
         player.y = 400;
         player.speedX = 0;
         player.speedY = 0;
-        itemIndex = Math.floor((Math.random() * itemsArray.length))
+        // itemIndex = Math.floor((Math.random() * itemsArray.length))
+        itemIndex = 2;
         gotItem = false;
 
         itemChosen = itemsArray[itemIndex];
@@ -816,6 +821,18 @@ function itemMoveOutOfChest(subject) {
 
 }
 
+function boomMF(target){
+    if(explodeAmmo.crashWith(target)){
+        document.getElementById("explosion").src = "assets/explosion.gif";
+        $('#explosion').css('top', explodeAmmo.y);
+        $('#explosion').css('opacity', 1);
+        $('#explosion').css('left', explodeAmmo.x);
+        target.health-=15;
+        
+        removeFromAll(explodeAmmo);
+        explodeAmmo = null;
+    }
+}
 
 function resetGif(w, h, src) {
     document.getElementById("dddeath").src = src;
@@ -823,8 +840,20 @@ function resetGif(w, h, src) {
     document.getElementById("dddeath").height = h;
 }
 
+var pParent = document.getElementById("popUpParent");
+
+function createExplosion(w, h){
+    var exp = document.createElement("IMG");
+    exp.setAttribute("src", "assets/explosion.gif");
+    exp.setAttribute("width", w);
+    exp.setAttribute("height", h);
+    exp.setAttribute("alt", "explode");
+    exp.setAttribute("class", "ddeath");
+    exp.setAttribute("id", "explosion");
+    pParent.appendChild(exp);
+}
+
 function createGif(w, h, alt) {
-	var pParent = document.getElementById("popUpParent");
     var x = document.createElement("IMG");
     x.setAttribute("src", "assets/death/death.gif");
     x.setAttribute("width", w);
@@ -1222,7 +1251,9 @@ var ragePause = 0;
 
 function boss2Behavior() {
     collisionDamage(boss2, player, immunityFrame);
-
+    if(explodeAmmo!=null){
+        boomMF(boss2);;
+    }
     if (boss2.health <= 0) {
     	boss2IsAlive = false;
         universalBossDeath(boss2, true)
@@ -1594,7 +1625,7 @@ function createEnemy(startX, startY, endX, endY) {
     enemy.endY = endY;
     enemy.startX = startX;
     enemy.startY = startY;
-    enemy.health = 100;
+    enemy.health = 10;
     enemy.isBoss = true;
     allGameElements.push(enemy);
 }
@@ -1879,8 +1910,14 @@ class component {
     }
 }
 var playerfireCount = 0;
+
+function explode(target){
+
+}
+
 function shoot() {
     if(player.explodeAmmo && playerfireCount %10 == 0){
+        console.log("WORKING");
         explodeAmmo = new component(73, 102, images.WackAssCryptocurrencyBullet, player.x + player.width/2, player.y + player.height/2);
         allGameElements.push(explodeAmmo);
     }
@@ -1915,6 +1952,9 @@ function shoot() {
             setSpeedArray.push(mpBullets);
         }
     }
+    playerfireCount++;
+    console.log(player.explodeAmmo);
+    console.log(playerfireCount);
 }
 
 // function component(width, x, y){
@@ -2020,6 +2060,9 @@ function boss1Behavior() {
 
     bulletsDamage(enemy, supullets);
     bulletsDamage(player, allTheEnemyBullets);
+    if(player.explodeAmmo){
+        boomMF(enemy);
+    }
     }
 }
 
@@ -2219,9 +2262,8 @@ function getItem(item) {
                 });
 
             }
-            else if(correspondItem() == "explosion"){
+            else if(correspondItem() == explosion){
                 player.explodeAmmo = true;
-                bulletsNumber += 1;
                 itemAcquired(images.robotAcquired);
                 gotItem = true;
 
@@ -2348,6 +2390,9 @@ window.onkeyup = function(e) {
     if (key == "40") {
         shoot();
         setAllBulletSpeedY(bulletsSpeed);
+        if(explodeAmmo !=null){
+            explodeAmmo.speedY = bulletsSpeed;
+        }
         // if(boss2Pet!=null){
         // 	 b2Bullets.speedY = bulletsSpeed
         //  }
@@ -2358,7 +2403,9 @@ window.onkeyup = function(e) {
     if (key == "37") {
         shoot();
         setAllBulletSpeedX(-bulletsSpeed);
-
+        if(explodeAmmo !=null){
+            explodeAmmo.speedX = -bulletsSpeed;
+        }
         // if(boss2Pet!=null){
         // 	 b2Bullets.speedX = -bulletsSpeed;
         //  }
@@ -2368,7 +2415,9 @@ window.onkeyup = function(e) {
     if (key == "39") {
         shoot();
         setAllBulletSpeedX(bulletsSpeed);
-
+        if(explodeAmmo !=null){
+            explodeAmmo.speedX = bulletsSpeed;
+        }
         // if(boss2Pet!=null){
         //  b2Bullets.speedX = bulletsSpeed;
         // }
@@ -2409,7 +2458,7 @@ function followPlayer(enemyName, target, speed) {
     }
     if (enemyName.speedX >= targetSpeedX) {
 
-        enemyName.speedX = targetSpeedX
+        enemyName.speedX = targetSpeedX;
 
 
         if (targetSpeedY <= 0) {
