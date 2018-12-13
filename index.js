@@ -120,6 +120,7 @@ var sources = {
     WackAssCryptocurrencyBullet:'assets/Wack Ass Cryptocurrency Bullet.png',
     BAcquired: 'assets/BAcquired.png',
     robotAcquired: 'assets/robotAcquired.png',
+    explosion: 'assets/explosion.gif'
 }
 
 // if (typeof console  != "undefined") 
@@ -187,7 +188,6 @@ function startGame() {
 
     myGameArea.start();
     createGif(0, 0, "");
-    createExplosion(200, 247)
     heart = new component2(210, 48, images.GucciGaygeFull, 20, 20, "image");
 
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
@@ -824,9 +824,12 @@ function itemMoveOutOfChest(subject) {
 function boomMF(target){
     if(explodeAmmo.crashWith(target)){
         document.getElementById("explosion").src = "assets/explosion.gif";
-        $('#explosion').css('top', explodeAmmo.y);
+
+        $('#explosion').css('top', explodeAmmo.y-scrollY-explodeAmmo.height);
+        console.log(scrollX);
+        console.log(scrollY)
         $('#explosion').css('opacity', 1);
-        $('#explosion').css('left', explodeAmmo.x);
+        $('#explosion').css('left', explodeAmmo.x-scrollX-explodeAmmo.width);
         target.health-=15;
         
         removeFromAll(explodeAmmo);
@@ -842,16 +845,12 @@ function resetGif(w, h, src) {
 
 var pParent = document.getElementById("popUpParent");
 var explodeParent = document.getElementById("explosions");
-function createExplosion(w, h){
-    var exp = document.createElement("IMG");
-    exp.setAttribute("src", "assets/explosion.gif");
-    exp.setAttribute("width", w);
-    exp.setAttribute("height", h);
-    exp.setAttribute("alt", "explode");
-    exp.setAttribute("class", "ddeath");
-    exp.setAttribute("id", "explosion");
-    pParent.appendChild(exp);
+function createExplosion(x,y){
+    var explosion = GIF();
+    explosion.load(images.explosion);
+    ctx.drawImage(explosion.Image, x, y)
 }
+    
 
 function createGif(w, h, alt) {
     var x = document.createElement("IMG");
@@ -1252,7 +1251,7 @@ var ragePause = 0;
 function boss2Behavior() {
     collisionDamage(boss2, player, immunityFrame);
     if(explodeAmmo!=null){
-        boomMF(boss2);;
+        createExplosion(explodeAmmo.x, explodeAmmo.y)
     }
     if (boss2.health <= 0) {
     	boss2IsAlive = false;
@@ -1827,6 +1826,7 @@ var myGameArea = {
         this.canvas.height = 800;
         this.context = this.canvas.getContext("2d");
         this.canvas.setAttribute("class", "gameBG");
+        this.canvas.setAttribute("id", "canva");
         document.getElementById("wrapper").insertBefore(this.canvas, document.getElementById("wrapper").childNodes[0]);
         this.frameNo = 0;
 
@@ -1917,8 +1917,7 @@ function explode(target){
 
 function shoot() {
     if(player.explodeAmmo && playerfireCount %10 == 0){
-        console.log("WORKING");
-        explodeAmmo = new component(73, 102, images.WackAssCryptocurrencyBullet, player.x + player.width/2, player.y + player.height/2);
+        explodeAmmo = new component(73, 102, images.WackAssCryptocurrencyBullet, player.x + player.width/2, player.y + player.height/2, "image");
         allGameElements.push(explodeAmmo);
     }
     else{
@@ -1953,8 +1952,7 @@ function shoot() {
         }
     }
     playerfireCount++;
-    console.log(player.explodeAmmo);
-    console.log(playerfireCount);
+
 }
 
 // function component(width, x, y){
@@ -2061,7 +2059,7 @@ function boss1Behavior() {
     bulletsDamage(enemy, supullets);
     bulletsDamage(player, allTheEnemyBullets);
     if(player.explodeAmmo){
-        boomMF(enemy);
+        createExplosion(explodeAmmo.x, explodeAmmo.y)
     }
     }
 }
