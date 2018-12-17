@@ -8,7 +8,6 @@
     <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
 
   </head>
-  <script src = "gifLoader.js"></script>
 
   <script src="index.js" type = "module"></script>
 
@@ -16,11 +15,11 @@
 
     
     <canvas width = "800" height = "500" style = "background:transparent; position: absolute; z-index: 5;opacity:0;" id = "staticElements"></canvas>
-    <div id = "explosions">
-    </div>
+
 
     <div id = "wrapper" style = "width: 800px; height:500px; overflow: hidden;">
-
+      <div id = "explosions">
+      </div>
         <button onclick = "loadImages(sources, function(){
           startGame();
         })" id = "someButton">

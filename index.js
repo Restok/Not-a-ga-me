@@ -185,22 +185,22 @@ var ball = {
 
 
 function startGame() {
-
+    console.log("starting game")
     myGameArea.start();
     createGif(0, 0, "");
     heart = new component2(210, 48, images.GucciGaygeFull, 20, 20, "image");
 
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
     player = new component(70, 58.45, images.PlayerSprite, 450, 200, "image");
+    player.explodeAmmo = true;
     bbBar = new component2(500, 7, images.BossHealthBarNonspecific, 150,450, "image");
-
+    createExplosion()
     itemSrcArray = [images.SubremePowerupPickup, images.RavinRoboBoy, images.WackAssCryptocurrency, images.PortraitofYourMom];
     allGameElements.push(portal);
     document.getElementById("staticElements").style.opacity = 1;
 
     player.health = 6;
     allGameElements.push(player);
-    console.log(allGameElements)
 
     player.friendly = true;
     requestAnimationFrame(updateGameArea)
@@ -820,20 +820,17 @@ function itemMoveOutOfChest(subject) {
     subject.y = 550;
 
 }
-
 function boomMF(target){
     if(explodeAmmo.crashWith(target)){
-        document.getElementById("explosion").src = "assets/explosion.gif";
-
-        $('#explosion').css('top', explodeAmmo.y-scrollY-explodeAmmo.height);
-        console.log(scrollX);
-        console.log(scrollY)
+        getXplodeAndY(target);
+        document.getElementById("explosion").src = images.explosion.src;
+        $('#explosion').css('top', explodeAmmo.y-scrollY+xplodeW/2);
         $('#explosion').css('opacity', 1);
-        $('#explosion').css('left', explodeAmmo.x-scrollX-explodeAmmo.width);
+        $('#explosion').css('left', explodeAmmo.x-scrollX+xplodeH/2);
         target.health-=15;
-        
         removeFromAll(explodeAmmo);
         explodeAmmo = null;
+        gotCor = true;
     }
 }
 
@@ -845,10 +842,39 @@ function resetGif(w, h, src) {
 
 var pParent = document.getElementById("popUpParent");
 var explodeParent = document.getElementById("explosions");
-function createExplosion(x,y){
-    var explosion = GIF();
-    explosion.load(images.explosion);
-    ctx.drawImage(explosion.Image, x, y)
+var xplode;
+var xplodeX = 0
+var xplodeY = 0
+var xplodeW = 0;
+var xplodeH = 0;
+var multY = 0;
+var multX = 0;
+function getXplodeAndY(target){
+ 
+    if(explodeAmmo.x>target.x){
+        multX = target.width;
+    }
+    else{
+        multX = 0;
+    }
+    if(explodeAmmo.y>target.y){
+        multY = target.height
+    }
+    else{
+        multY = 0;
+    }
+    xplodeX = explodeAmmo.x;
+    xplodeY = explodeAmmo.y;
+    xplodeW = explodeAmmo.width+multX;
+    xplodeH = explodeAmmo.height;
+}
+var gotCor = false;
+function createExplosion(){
+    xplode  = document.createElement("IMG");
+    xplode.setAttribute("id", "explosion")
+    $('#explosion').css('opacity', 0);
+
+    explodeParent.appendChild(xplode)
 }
     
 
@@ -860,6 +886,7 @@ function createGif(w, h, alt) {
     x.setAttribute("alt", alt);
     x.setAttribute("class", "ddeath");
     x.setAttribute("id", "dddeath");
+    console.log("Hi")
     pParent.appendChild(x);
 }
 //var sup1 = new SuperGif({ gif: document.getElementById('example1') } );
@@ -1250,9 +1277,9 @@ var ragePause = 0;
 
 function boss2Behavior() {
     collisionDamage(boss2, player, immunityFrame);
-    if(explodeAmmo!=null){
-        createExplosion(explodeAmmo.x, explodeAmmo.y)
-    }
+    // if(explodeAmmo!=null){
+    //     createExplosion(explodeAmmo.x, explodeAmmo.y)
+    // }
     if (boss2.health <= 0) {
     	boss2IsAlive = false;
         universalBossDeath(boss2, true)
@@ -1624,7 +1651,7 @@ function createEnemy(startX, startY, endX, endY) {
     enemy.endY = endY;
     enemy.startX = startX;
     enemy.startY = startY;
-    enemy.health = 10;
+    enemy.health = 5000;
     enemy.isBoss = true;
     allGameElements.push(enemy);
 }
@@ -2010,9 +2037,22 @@ function portalBehavior() {
         }
     }
 }
-
+var explodeTrackTimer = 0;
 function boss1Behavior() {
     enemyMovePattern();
+
+    if(explodeAmmo!=null){
+        boomMF(enemy)
+    }
+    if(gotCor && explodeTrackTimer<60){
+        $('#explosion').css('top', xplodeY-scrollY+xplodeH);
+        $('#explosion').css('left', xplodeX-scrollX+xplodeW);
+        explodeTrackTimer+=1
+    }
+    else{
+        explodeTrackTimer = 0
+        gotCor = false;
+    }
     if (attacking == false) {
         myGameArea.frameNo += 1;
     }
@@ -2058,9 +2098,9 @@ function boss1Behavior() {
 
     bulletsDamage(enemy, supullets);
     bulletsDamage(player, allTheEnemyBullets);
-    if(player.explodeAmmo){
-        createExplosion(explodeAmmo.x, explodeAmmo.y)
-    }
+    // if(explodeAmmo!=null){
+    //     createExplosion(explodeAmmo.x, explodeAmmo.y)
+    // }
     }
 }
 

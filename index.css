@@ -4,7 +4,8 @@
 }
 #explosion{
 	position:absolute;
-	z-index:99;
+	width:400px;
+	height:500px;
 }
 .popups{
 	position:absolute;
