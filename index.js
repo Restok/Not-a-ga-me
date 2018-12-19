@@ -195,6 +195,10 @@ function startGame() {
     player.explodeAmmo = true;
     bbBar = new component2(500, 7, images.BossHealthBarNonspecific, 150,450, "image");
     createExplosion()
+    $('#explosion').css('height', 0);
+    $('#explosion').css('width', 0);
+    $('#explosion').css('top', 0);
+    $('#explosion').css('left', 0);
     itemSrcArray = [images.SubremePowerupPickup, images.RavinRoboBoy, images.WackAssCryptocurrency, images.PortraitofYourMom];
     allGameElements.push(portal);
     document.getElementById("staticElements").style.opacity = 1;
@@ -824,9 +828,11 @@ function boomMF(target){
     if(explodeAmmo.crashWith(target)){
         getXplodeAndY(target);
         document.getElementById("explosion").src = images.explosion.src;
-        $('#explosion').css('top', explodeAmmo.y-scrollY+xplodeW/2);
+        $('#explosion').css('top', xplodeY);
         $('#explosion').css('opacity', 1);
-        $('#explosion').css('left', explodeAmmo.x-scrollX+xplodeH/2);
+        $('#explosion').css('left', xplodeX);
+        $('#explosion').css('height', 500);
+        $('#explosion').css('width', 400);
         target.health-=15;
         removeFromAll(explodeAmmo);
         explodeAmmo = null;
@@ -851,22 +857,9 @@ var multY = 0;
 var multX = 0;
 function getXplodeAndY(target){
  
-    if(explodeAmmo.x>target.x){
-        multX = target.width;
-    }
-    else{
-        multX = 0;
-    }
-    if(explodeAmmo.y>target.y){
-        multY = target.height
-    }
-    else{
-        multY = 0;
-    }
-    xplodeX = explodeAmmo.x;
-    xplodeY = explodeAmmo.y;
-    xplodeW = explodeAmmo.width+multX;
-    xplodeH = explodeAmmo.height;
+    xplodeX = target.x-target.width/2
+    xplodeY = target.y-target.height
+
 }
 var gotCor = false;
 function createExplosion(){
@@ -2041,12 +2034,12 @@ var explodeTrackTimer = 0;
 function boss1Behavior() {
     enemyMovePattern();
 
-    if(explodeAmmo!=null){
+    if(explodeAmmo!=null){xplodeX
         boomMF(enemy)
     }
     if(gotCor && explodeTrackTimer<60){
-        $('#explosion').css('top', xplodeY-scrollY+xplodeH);
-        $('#explosion').css('left', xplodeX-scrollX+xplodeW);
+        $('#explosion').css('top', xplodeY);
+        $('#explosion').css('left', xplodeX);
         explodeTrackTimer+=1
     }
     else{
