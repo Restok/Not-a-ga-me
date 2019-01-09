@@ -63,7 +63,7 @@ class component2{
     }   
 }
 function updateBossHealth(badGuy){
-	bossHealth.width -= (bossHealth.width/badGuy.health);
+  bossHealth.width -= (bossHealth.width/badGuy.health);
 }
 function clearBoard() {
     contx.clearRect(0, 0, canv.width, canv.height);

@@ -186,15 +186,15 @@ var ball = {
 
 function startGame() {
     console.log("starting game")
+    $("#someButton").hide();
     myGameArea.start();
     createGif(0, 0, "");
     heart = new component2(210, 48, images.GucciGaygeFull, 20, 20, "image");
 
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
     player = new component(70, 58.45, images.PlayerSprite, 450, 200, "image");
-    player.explodeAmmo = true;
     bbBar = new component2(500, 7, images.BossHealthBarNonspecific, 150,450, "image");
-    createExplosion()
+    createExplosion();
     $('#explosion').css('height', 0);
     $('#explosion').css('width', 0);
     $('#explosion').css('top', 0);
@@ -233,7 +233,7 @@ function createNoobBoss() {
 
 function createMK69(){
     finalfinalBoss = new component(660, 750, images.FinalFINALBossMK69VirginDefenseSystemNotFiringCensored, 1500-616, 25, "image");
-    finalfinalBoss.health = 50;
+    finalfinalBoss.health = 2000;
     finalfinalBoss.isBoss = true;
     finalfinalBoss.friendly = false;
     allGameElements.push(finalfinalBoss);
@@ -451,7 +451,7 @@ function trackingBullets(){
 
 function createFinalBoss(){
     finalBoss = new component(300, 300, images.FinalBossCensored, 650, 300, "image");
-    finalBoss.health = 1;
+    finalBoss.health = 1000;
     finalBoss.isBoss = true;
     finalBoss.friendly = false;
     allGameElements.push(finalBoss);
@@ -812,7 +812,7 @@ function spawnItems() {
                 allGameElements.push(mspd);
                 break;
             case 2:
-                explosion = new component(66.6, 16.3, images.WackAssCryptocurrency, 725, 450, "image");
+                explosion = new component(66.6, 32.66, images.WackAssCryptocurrency, 725, 450, "image");
                 allGameElements.push(explosion);
             }
         spawnOne = true;
@@ -834,6 +834,7 @@ function boomMF(target){
         $('#explosion').css('height', 500);
         $('#explosion').css('width', 400);
         target.health-=15;
+        updateBossHealth(target)
         removeFromAll(explodeAmmo);
         explodeAmmo = null;
         gotCor = true;
@@ -1644,7 +1645,7 @@ function createEnemy(startX, startY, endX, endY) {
     enemy.endY = endY;
     enemy.startX = startX;
     enemy.startY = startY;
-    enemy.health = 5000;
+    enemy.health = 100;
     enemy.isBoss = true;
     allGameElements.push(enemy);
 }
@@ -2034,7 +2035,7 @@ var explodeTrackTimer = 0;
 function boss1Behavior() {
     enemyMovePattern();
 
-    if(explodeAmmo!=null){xplodeX
+    if(explodeAmmo!=null){
         boomMF(enemy)
     }
     if(gotCor && explodeTrackTimer<60){
@@ -2295,13 +2296,13 @@ function getItem(item) {
             }
             else if(correspondItem() == explosion){
                 player.explodeAmmo = true;
-                itemAcquired(images.robotAcquired);
+                // itemAcquired(images.robotAcquired);
                 gotItem = true;
 
-                $("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function() {
-                    $("#itemScreen").remove();
+                // $("#itemScreen").fadeIn(1000).delay(4000).fadeOut(1000, function() {
+                //     $("#itemScreen").remove();
 
-                });
+                // });
 
             }
         }
