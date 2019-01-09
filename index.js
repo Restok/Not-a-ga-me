@@ -775,15 +775,15 @@ function setLevel() {
 function correspondItem() {
     switch (itemChosen) {
         case 0:
-            return dmg;
+            return "dmg";
             break;
         case 1:
-            return mspd;
+            return "mspd";
             break;
         case 2:
-            console.log("returned");
-            return explosion;
+            return "explosion";
             break;
+        
     }
 }
 var itemIndex;
@@ -2274,7 +2274,7 @@ function getItem(item) {
                 allGameElements.splice(index, 1);
                 item = null;
             }
-            if (correspondItem() == dmg) {
+            if (correspondItem() == "dmg") {
                 player.Bitem = true;
                 supullets.damage = 1.3;
                 itemAcquired(images.BAcquired);
@@ -2287,7 +2287,7 @@ function getItem(item) {
                 bulletsNumber +=1;
 
 
-            } else if(correspondItem() == mspd){
+            } else if(correspondItem() == "mspd"){
                 player.robot = true;
                 playerMovementSpeed = 6;
                 bulletsNumber += 1;
@@ -2300,7 +2300,7 @@ function getItem(item) {
                 });
 
             }
-            else if(correspondItem() == explosion){
+            else if(correspondItem() == "explosion"){
                 player.explodeAmmo = true;
                 // itemAcquired(images.robotAcquired);
                 gotItem = true;
