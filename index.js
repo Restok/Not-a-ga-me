@@ -245,6 +245,7 @@ var mkAlive = true;
 var randomAttack = 0;
 var timeToAttack = 0;
 function mk69Behavior(){
+    getBoomed(finalfinalBoss);
     bulletsDamage(finalfinalBoss, supullets);
     bulletsDamage(player, allTheEnemyBullets);
     dontfuckingwalkonmk69();
@@ -463,6 +464,7 @@ var fbAttackIndex = 0;
 var fbAttackIndexAr = [0,1];
 
 function finalBossBehavior(){
+    getBoomed(finalBoss)
     bulletsDamage(player, allTheEnemyBullets);
     bulletsDamage(finalBoss, supullets);
     fbisAlive = finalBoss.health > 0 ? true:false;
@@ -796,8 +798,7 @@ function spawnItems() {
         player.y = 400;
         player.speedX = 0;
         player.speedY = 0;
-        // itemIndex = Math.floor((Math.random() * itemsArray.length))
-        itemIndex = 2;
+        itemIndex = Math.floor((Math.random() * itemsArray.length))
         gotItem = false;
 
         itemChosen = itemsArray[itemIndex];
@@ -1150,6 +1151,7 @@ var mimicPet = null;
 var destroyBoss = false;
 
 function mimicBehavior() {
+    getBoomed(mimic);
     mimic.health <= 0 ? mimicIsAlive = false : mimicIsAlive = true;
     if (mimicIsAlive) {
         bulletsDamage(player, allTheEnemyBullets)
@@ -1268,9 +1270,24 @@ function dontfuckingwalkonchests() {
     }
 }
 var ragePause = 0;
-
+function getBoomed(target){
+    if(explodeAmmo!=null){
+        boomMF(target)
+    }
+    if(gotCor && explodeTrackTimer<60){
+        $('#explosion').css('top', xplodeY);
+        $('#explosion').css('left', xplodeX);
+        explodeTrackTimer+=1
+    }
+    else{
+        explodeTrackTimer = 0
+        gotCor = false;
+    }
+}
 function boss2Behavior() {
+    getBoomed(boss2);
     collisionDamage(boss2, player, immunityFrame);
+    
     // if(explodeAmmo!=null){
     //     createExplosion(explodeAmmo.x, explodeAmmo.y)
     // }
@@ -2034,19 +2051,7 @@ function portalBehavior() {
 var explodeTrackTimer = 0;
 function boss1Behavior() {
     enemyMovePattern();
-
-    if(explodeAmmo!=null){
-        boomMF(enemy)
-    }
-    if(gotCor && explodeTrackTimer<60){
-        $('#explosion').css('top', xplodeY);
-        $('#explosion').css('left', xplodeX);
-        explodeTrackTimer+=1
-    }
-    else{
-        explodeTrackTimer = 0
-        gotCor = false;
-    }
+    getBoomed(enemy)
     if (attacking == false) {
         myGameArea.frameNo += 1;
     }
@@ -2136,7 +2141,7 @@ function noobMinionBehavior() {
 function spawnMinions() {
     spawnCount = Math.floor(Math.random() * 3) + 1;
     for (i = 0; i < spawnCount; i++) {
-        minion = new component(40, 40, "blue", (noobBoss.x + Math.floor(Math.random() * 201) - 100), (noobBoss.y + Math.floor(Math.random() * 201) - 100));
+        minion = new component(40, 40, images.WackAssCryptocurrencyBullet, (noobBoss.x + Math.floor(Math.random() * 201) - 100), (noobBoss.y + Math.floor(Math.random() * 201) - 100));
         minion.health = 20;
         minion.friendly = false;
         noobMinions.push(minion);
@@ -2145,6 +2150,7 @@ function spawnMinions() {
 var noobBossIsAlive = true;
 
 function noobBossBehavior() {
+    getBoomed(noobBoss)
     if (noobBossIsAlive) {
         myGameArea.frameNo += 1;
         followPlayer(noobBoss, player, 2);
@@ -2281,7 +2287,7 @@ function getItem(item) {
                 bulletsNumber +=1;
 
 
-            } else if(correspondItem() == "mspd"){
+            } else if(correspondItem() == mspd){
                 player.robot = true;
                 playerMovementSpeed = 6;
                 bulletsNumber += 1;
