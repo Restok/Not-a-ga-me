@@ -755,7 +755,7 @@ function setLevel() {
                 $('#setting').fadeOut(1000, function() {
 
                     created = false;
-                    createMK69();
+                    createFinalBoss();
                     player.x = 100;
                     player.y = 100;
                     level += 1;
