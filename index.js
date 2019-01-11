@@ -61,6 +61,12 @@ var finalBoss = null;
 var itemSrcArray = [];
 var massiveBulletArray = [];
 var allTheEnemyBullets = [];
+var b1H = 100;
+var b2H = 300;
+var b3H = 500;
+var mBH = bulletsNumber*100;
+var fBH = 1000;
+var ffBH = 1500;
 var explodeAmmo = null;
 var sources = {
     WackAssCryptocurrency:'assets/Wack Ass Cryptocurrency.png',
@@ -223,7 +229,7 @@ function removeFromAll(removed) {
 
 function createNoobBoss() {
     noobBoss = new component(170, 229, images.TheJackhammer, 650, 300, "image");
-    noobBoss.health = 600;
+    noobBoss.health = b3H;
     noobBoss.isBoss = true;
     noobBoss.friendly = false;
     allGameElements.push(noobBoss);
@@ -233,7 +239,7 @@ function createNoobBoss() {
 
 function createMK69(){
     finalfinalBoss = new component(660, 750, images.FinalFINALBossMK69VirginDefenseSystemNotFiringCensored, 1500-616, 25, "image");
-    finalfinalBoss.health = 2000;
+    finalfinalBoss.health = ffBH;
     finalfinalBoss.isBoss = true;
     finalfinalBoss.friendly = false;
     allGameElements.push(finalfinalBoss);
@@ -452,7 +458,7 @@ function trackingBullets(){
 
 function createFinalBoss(){
     finalBoss = new component(300, 300, images.FinalBossCensored, 650, 300, "image");
-    finalBoss.health = 1000;
+    finalBoss.health = fBH;
     finalBoss.isBoss = true;
     finalBoss.friendly = false;
     allGameElements.push(finalBoss);
@@ -545,18 +551,17 @@ function finalBossBehavior(){
                 player.x = 400;
                 player.y = 300;
             }
-            else if(timeUntilGone > 450){
+            else if(timeUntilGone > 550){
     
                 player.x = 400;
                 player.y = 300;
                 allGameElements.push(itemChest);
                 spawnOne = false;
-                createMK69();
-
                 removeFromAll(finalBoss);
 
                 finalBoss = null;
                 destroyBoss = true;
+                setLevel();
             }
             if(!created){
     
@@ -766,8 +771,36 @@ function setLevel() {
             destroyBoss = false;
             timeUntilGone = 0;
             break;
-            
+        case 4:
+            createMimic = false;
+            immunityFrame.frame = 0;
+            immunityFrame2.frame = 0;
+            supullets = [];
+            removeFromAll(portal);
+            removeFromAll(itemChest);
+            portal = null;
+            itemChest = null;
+            bossHealth = new component2(494, 3, "green", 153, 452, "a");
+            createPopUp("assets/BIGNIBBA.jpg", "cutScene");
+            $('#close').on("click", function() {
+
+                $('#close').hide();
+                $('#setting').fadeOut(1000, function() {
+
+                    created = false;
+                    createMK69();
+                    player.x = 100;
+                    player.y = 100;
+                    level += 1;
+                    $("#close").remove();
+                    $("#setting").remove();
+                })
+            })
+            destroyBoss = false;
+            timeUntilGone = 0;
+            break;
         }
+        
         
 
 }
@@ -914,7 +947,7 @@ function createEnemy2(x, y) {
     created = false;
     boss2 = new component(180, 207, images.Boss2MedicatedMushroom, x, y, "image");
     boss2.friendly = false;
-    boss2.health = 300;
+    boss2.health = b2H;
     boss2.isBoss = true;
     timeUntilGone = 0;
     allGameElements.push(boss2);
@@ -1220,11 +1253,11 @@ function spawnMimic() {
     mimic = new component(534, 200, images.mimic, 750 - 231, 400 - 86, "image");
     mimic.friendly = false;
     mimic.isBoss = true;
-    mimic.health = bulletsNumber*100;
+    mimic.health = mBH;
     allGameElements.push(mimic);
 }
 function dontfuckingwalkonmk69(){
-    if (player.crashWith(finalfinalBoss)) {
+    if (player.x >= finalfinalBoss.x+200) {
         if (getPreviousPlayerPos) {
             prevPlayerX = player.x;
             prevPlayerY = player.y;
@@ -1261,7 +1294,7 @@ function dontfuckingwalkonchests() {
                     player.x = prevPlayerX;
                     player.y = prevPlayerY;
                     spawnItems();
-                    itemMoveOutOfChest(correspondItem());
+                    itemMoveOutOfChest(eval(correspondItem()));
                 }
             }
         } else {
@@ -1662,7 +1695,7 @@ function createEnemy(startX, startY, endX, endY) {
     enemy.endY = endY;
     enemy.startX = startX;
     enemy.startY = startY;
-    enemy.health = 100;
+    enemy.health = b1H;
     enemy.isBoss = true;
     allGameElements.push(enemy);
 }
@@ -2257,7 +2290,7 @@ function updateGameArea() {
         mk69Behavior();
     }
     if(!gotItem){
-        getItem(correspondItem());
+        getItem(eval(correspondItem()));
     }
     requestAnimationFrame(updateGameArea);
 
