@@ -38,7 +38,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 0;
+var level = 2;
 var portal = null;
 var d1;
 var d2;
@@ -126,7 +126,8 @@ var sources = {
     WackAssCryptocurrencyBullet:'assets/Wack Ass Cryptocurrency Bullet.png',
     BAcquired: 'assets/BAcquired.png',
     robotAcquired: 'assets/robotAcquired.png',
-    explosion: 'assets/explosion.gif'
+    explosion: 'assets/explosion.gif',
+    saw: 'assets/sawblade.png'
 }
 
 // if (typeof console  != "undefined") 
@@ -174,7 +175,7 @@ function circlePath(following) {
     circle.centerY = following.y + following.height / 2;
     spinny.x = circle.centerX + Math.cos(circle.angle) * circle.radius;
     spinny.y = circle.centerY + Math.sin(circle.angle) * circle.radius;
-    circle.angle += 10;
+    circle.angle += 0.1;
 }
 
 var circle = {
@@ -233,7 +234,7 @@ function createNoobBoss() {
     noobBoss.isBoss = true;
     noobBoss.friendly = false;
     allGameElements.push(noobBoss);
-    spinny = new component(30, 30, "red", ball.x, ball.y)
+    spinny = new component(65, 67, images.saw, ball.x, ball.y, "image");
     allGameElements.push(spinny);
 }
 
@@ -2174,7 +2175,7 @@ function noobMinionBehavior() {
 function spawnMinions() {
     spawnCount = Math.floor(Math.random() * 3) + 1;
     for (i = 0; i < spawnCount; i++) {
-        minion = new component(40, 40, images.WackAssCryptocurrencyBullet, (noobBoss.x + Math.floor(Math.random() * 201) - 100), (noobBoss.y + Math.floor(Math.random() * 201) - 100));
+        minion = new component(73, 100, images.WackAssCryptocurrencyBullet, (noobBoss.x + Math.floor(Math.random() * 201) - 100), (noobBoss.y + Math.floor(Math.random() * 201) - 100), "image");
         minion.health = 20;
         minion.friendly = false;
         noobMinions.push(minion);
