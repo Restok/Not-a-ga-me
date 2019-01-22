@@ -38,7 +38,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 2;
+var level = 4;
 var portal = null;
 var d1;
 var d2;
@@ -239,7 +239,7 @@ function createNoobBoss() {
 }
 
 function createMK69(){
-    finalfinalBoss = new component(660, 750, images.FinalFINALBossMK69VirginDefenseSystemNotFiringCensored, 1500-616, 25, "image");
+    finalfinalBoss = new component(528, 600, images.FinalFINALBossMK69VirginDefenseSystemNotFiringCensored, 1500-800, 100, "image");
     finalfinalBoss.health = ffBH;
     finalfinalBoss.isBoss = true;
     finalfinalBoss.friendly = false;
@@ -1258,7 +1258,7 @@ function spawnMimic() {
     allGameElements.push(mimic);
 }
 function dontfuckingwalkonmk69(){
-    if (player.x >= finalfinalBoss.x+200) {
+    if (player.x >= finalfinalBoss.x+100) {
         if (getPreviousPlayerPos) {
             prevPlayerX = player.x;
             prevPlayerY = player.y;
