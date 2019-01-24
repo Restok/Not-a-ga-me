@@ -127,7 +127,9 @@ var sources = {
     BAcquired: 'assets/BAcquired.png',
     robotAcquired: 'assets/robotAcquired.png',
     explosion: 'assets/explosion.gif',
-    saw: 'assets/sawblade.png'
+    saw: 'assets/sawblade.png',
+    stalinMount: 'assets/stalincatmount.png',
+    stalinMountFire: 'assets/stalincatmountfire.png'
 }
 
 // if (typeof console  != "undefined") 
@@ -258,8 +260,10 @@ function mk69Behavior(){
     dontfuckingwalkonmk69();
     if(mkAlive){
         if(!mkAttacking && attackTimer>200){
-            randomAttack = Math.floor(Math.random()*4);
+            // randomAttack = Math.floor(Math.random()*4);
+            randomAttack = 1;
             mkAttacking = true;
+
         }
         if(mkAttacking){
             
@@ -443,6 +447,31 @@ var fireCounter= 0;
 function trackingBullets(){
     if(fireCounter > 70){
         tbullet = new component(60, 60, "red", finalfinalBoss.x, finalfinalBoss.y+finalfinalBoss.height/2 );
+        var yLen = (finalBoss.y) - player.y + player.height / 3;
+        var xLen = (finalBoss.x) - player.x + player.width / 3;
+        if (yLen <= 0 && xLen >= 0) {
+            multiplier3 = (xLen * -1 + yLen) / speed;
+        } else if (yLen >= 0 && xLen <= 0) {
+            multiplier3 = (xLen + yLen * -1) / speed;
+        } else {
+            multiplier3 = (xLen + yLen) / speed;
+        }
+    
+        if ((yLen <= 0 && xLen >= 0) || (xLen <= 0 && yLen <= 0) || (yLen >= 0 && xLen <= 0)) {
+            targetSpeedX = (xLen / multiplier3);
+            targetSpeedY = (yLen / multiplier3);
+        } else if (yLen >= 0 && xLen >= 0) {
+            targetSpeedX = (-xLen / multiplier3);
+            targetSpeedY = (-yLen / multiplier3);
+        } else if (yLen = 0) {
+            targetSpeedX = (xLen / multiplier3);
+            targetSpeedY = (-yLen / multiplier3);
+        } else {
+            targetSpeedX = (xLen / multiplier3);
+            targetSpeedY = (yLen / multiplier3);
+        }
+        tbullet.speedX = targetSpeedX;
+        tbullet.speedY = targetSpeedY;
         allTheEnemyBullets.push(tbullet);
         fireCounter =0;
     }
@@ -786,12 +815,16 @@ function setLevel() {
             $('#close').on("click", function() {
 
                 $('#close').hide();
-                $('#setting').fadeOut(1000, function() {
+                $('.gameBG').css("background-image", "url('assets/space.png')");
 
+                $('#setting').fadeOut(1000, function() {
                     created = false;
                     createMK69();
                     player.x = 100;
                     player.y = 100;
+                    player.color = images.stalinMount;
+                    player.width = 130;
+                    player.height = 96;
                     level += 1;
                     $("#close").remove();
                     $("#setting").remove();
@@ -2371,7 +2404,10 @@ function moveleft() {
         player.speedX = 0;
     } else {
         player.speedX = -playerMovementSpeed;
-        player.color = images.PlayerSpritefl
+        if(level == 5)
+            player.color = images.stalinMount;
+        else
+            player.color = images.PlayerSpritefl
 
     }
 }
@@ -2381,7 +2417,10 @@ function moveright() {
         player.speedx = 0;
     } else {
         player.speedX = playerMovementSpeed;
-        player.color = images.PlayerSprite;
+        if(level == 5)
+            player.color = images.stalinMount;
+        else
+            player.color = images.PlayerSprite;
     }
 }
 window.onkeydown = function(e) {
@@ -2407,8 +2446,11 @@ window.onkeydown = function(e) {
         movedown();
     }
     if (key == "37" || key == "38" || key == "39" || key == "40") {
-        player.color = images.PlayerSpriteDabRedEyes;
-    }
+        if(level == 5)
+            player.color = images.stalinMountFire;
+        else
+            player.color = images.PlayerSpriteDabRedEyes;
+        }
 
 }
 var bulletsSpeed = 5;
@@ -2457,7 +2499,10 @@ window.onkeyup = function(e) {
         //  b2Bullets.speedY = -bulletsSpeed;
         // }
         //    supullet.speedY = -bulletsSpeed;
-        player.color = images.PlayerSpritefl;
+        if(level == 5)
+            player.color = images.stalinMount;
+        else
+            player.color = images.PlayerSpritefl;
     }
     if (key == "40") {
         shoot();
@@ -2469,8 +2514,10 @@ window.onkeyup = function(e) {
         // 	 b2Bullets.speedY = bulletsSpeed
         //  }
         //    supullet.speedY = bulletsSpeed;
-        player.color = images.PlayerSpritefl;
-
+        if(level == 5)
+            player.color = images.stalinMount;
+        else
+            player.color = images.PlayerSpritefl;
     }
     if (key == "37") {
         shoot();
@@ -2482,7 +2529,10 @@ window.onkeyup = function(e) {
         // 	 b2Bullets.speedX = -bulletsSpeed;
         //  }
         //    supullet.speedX = -bulletsSpeed;
-        player.color = images.PlayerSpritefl;
+        if(level == 5)
+            player.color = images.stalinMount;
+        else
+            player.color = images.PlayerSpritefl;
     }
     if (key == "39") {
         shoot();
@@ -2497,8 +2547,11 @@ window.onkeyup = function(e) {
         //    b2Bullets.speedX = bulletsSpeed;
         //  }
         //   supullet.speedX = bulletsSpeed;
-        player.color = images.PlayerSprite;
-    }
+        if(level == 5)
+            player.color = images.stalinMount;
+        else
+            player.color = images.PlayerSprite;
+        }
 }
 
 function followPlayer(enemyName, target, speed) {
@@ -2559,11 +2612,11 @@ function trackEnemy(enemyName, trackArray) {
 
         for (i = 0; i < trackArray.length; i++) {
             var yLen = (trackArray[i].y) - enemyName.y + enemyName.height / 2;
-            var xLen = (trackArray[i].x) - enemyName.x + enemyName.width / 2;
+            var xLen = (trackArray[i].x) - enemyName.x;
 
             //  MULTIPLIER CALCULATES THE NUMBER THAT WOULD MAKE
             //  THE SUM OF X AND Y 5 WHILE MAINTAINING THE RATIO;
-            if (trackTime % 10 == 0 || subPixelRendering) {
+            if (trackTime % 20 == 0 || subPixelRendering) {
                 if (Math.abs(xLen) + Math.abs(yLen) < 500) {
                     if (yLen <= 0 && xLen >= 0) {
                         multiplier3 = (xLen * -1 + yLen) / 5;
