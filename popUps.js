@@ -29,3 +29,13 @@ function itemAcquired(source){
   document.getElementById("popUpParent").appendChild(ia);
   $("#itemScreen").hide();
 }
+function flash(){
+  popup = document.createElement("IMG");
+  popup.setAttribute("src", "assets/white.jpg");
+  popup.setAttribute("width", 800);
+  popup.setAttribute("height", 500);
+  popup.setAttribute("alt", "flash");
+  popup.setAttribute("class", "scenes");
+  popup.setAttribute("id", "flash");
+  document.getElementById("popUpParent").appendChild(popup);
+}

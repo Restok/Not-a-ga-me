@@ -38,7 +38,7 @@ var mpBullets
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
-var level = 4;
+var level = 0;
 var portal = null;
 var d1;
 var d2;
@@ -811,25 +811,33 @@ function setLevel() {
             portal = null;
             itemChest = null;
             bossHealth = new component2(494, 3, "green", 153, 452, "a");
-            createPopUp("assets/BIGNIBBA.jpg", "cutScene");
-            $('#close').on("click", function() {
+            flash();
+            $("#flash").hide().fadeIn(2000, function(){
+                createPopUp("assets/BIGNIBBA.jpg", "cutScene");
+                $("#flash").fadeOut(2000, function(){
+                    $("#flash").remove();
+                    $('#close').on("click", function() {
 
-                $('#close').hide();
-                $('.gameBG').css("background-image", "url('assets/space.png')");
-
-                $('#setting').fadeOut(1000, function() {
-                    created = false;
-                    createMK69();
-                    player.x = 100;
-                    player.y = 100;
-                    player.color = images.stalinMount;
-                    player.width = 130;
-                    player.height = 96;
-                    level += 1;
-                    $("#close").remove();
-                    $("#setting").remove();
+                        $('#close').hide();
+                        $('.gameBG').css("background-image", "url('assets/space.png')");
+        
+                        $('#setting').fadeOut(1000, function() {
+                            created = false;
+                            createMK69();
+                            player.x = 100;
+                            player.y = 100;
+                            player.color = images.stalinMount;
+                            player.width = 130;
+                            player.height = 96;
+                            level += 1;
+                            $("#close").remove();
+                            $("#setting").remove();
+                        })
+                    })
                 })
             })
+
+            
             destroyBoss = false;
             timeUntilGone = 0;
             break;
