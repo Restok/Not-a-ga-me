@@ -16,6 +16,7 @@ var enemy = null;
 var enemyPat = true;
 var fireCtrl = 0;
 var EBS;
+var laser;
 var spiralSpeedY = 5;
 var spiralSpeedX = 0;
 var spirCtrl = 0;
@@ -34,7 +35,7 @@ var itemChest = null;
 var getPreviousPlayerPos = false;
 var petDirection = "left";
 var mimicBullets = [];
-var mpBullets
+var mpBullets;
 var moveItem = true;
 var spawnOne = false;
 var playerMovementSpeed = 4;
@@ -129,7 +130,9 @@ var sources = {
     explosion: 'assets/explosion.gif',
     saw: 'assets/sawblade.png',
     stalinMount: 'assets/stalincatmount.png',
-    stalinMountFire: 'assets/stalincatmountfire.png'
+    stalinMountFire: 'assets/stalincatmountfire.png',
+    infinityGauntlet: 'assets/infinitygauntlet.png',
+    PlayerSpriteDabRedEyesAscended: 'assets/Player Sprite Dab Red Eyes Ascended.png'
 }
 
 // if (typeof console  != "undefined") 
@@ -199,9 +202,12 @@ function startGame() {
     myGameArea.start();
     createGif(0, 0, "");
     heart = new component2(210, 48, images.GucciGaygeFull, 20, 20, "image");
-
     portal = new component(90, 127.5, images.DoorClosed, 950, 400, "image");
     player = new component(70, 58.45, images.PlayerSprite, 450, 200, "image");
+    player.shaggy = true;
+
+    laser = new component(0, 100, "red",player.x,player.y,"");
+
     bbBar = new component2(500, 7, images.BossHealthBarNonspecific, 150,450, "image");
     createExplosion();
     $('#explosion').css('height', 0);
@@ -214,6 +220,7 @@ function startGame() {
 
     player.health = 6;
     allGameElements.push(player);
+    allGameElements.push(laser);
 
     player.friendly = true;
     requestAnimationFrame(updateGameArea)
@@ -1973,6 +1980,7 @@ class component {
         this.Bitem = false;
         this.robot = false;
         this.explodeAmmo = false;
+        this.shaggy = false;
         this.health = 0;
         this.internalCounter= 0;
         this.damage = 1;
@@ -2063,6 +2071,8 @@ function shoot() {
             supullets.push(mpBullets);
             setSpeedArray.push(mpBullets);
         }
+        // if(player.shaggy){
+        // }
     }
     playerfireCount++;
 
@@ -2298,7 +2308,8 @@ function updateGameArea() {
     } else {
         scrollY = 0;
     }
-
+    laser.x = player.x+player.width/2;
+    laser.y = player.y-player.height/2;
     scrollWrapper(scrollX, scrollY);
     if (noobPet !== null) {
         circlePath(noobPet)
@@ -2389,7 +2400,12 @@ function getItem(item) {
         }
     }
 }
-
+var laserCount = 0;
+function laserDamage(subject){
+    if(laser.crashWith(subject)){
+        subject.health-=bulletsNumber;
+    }
+}
 function moveup() {
     if (player.y <= 0) {
         player.y = player.y;
@@ -2414,9 +2430,15 @@ function moveleft() {
         player.speedX = -playerMovementSpeed;
         if(level == 5)
             player.color = images.stalinMount;
-        else
-            player.color = images.PlayerSpritefl
+        else{
+            if(player.shaggy){
+                player.color = images.PlayerSpriteDabRedEyes;
+            }
+            else{
+                player.color = images.PlayerSpritefl
 
+            }
+       }
     }
 }
 
@@ -2427,18 +2449,46 @@ function moveright() {
         player.speedX = playerMovementSpeed;
         if(level == 5)
             player.color = images.stalinMount;
-        else
-            player.color = images.PlayerSprite;
+        else{
+            if(player.shaggy){
+                player.color = images.PlayerSpriteDabRedEyes;
+            }
+            else{
+                player.color = images.PlayerSprite;
+
+            }
+       }
     }
 }
 window.onkeydown = function(e) {
     var key = e.keyCode ? e.keyCode : e.which;
+    if(player.shaggy){
+        if (key =='37'){
+            laser.width = -1500;
+            laser.height = 100;
+        }
+        if (key == '38') {
+            laser.width = 100;
+            laser.height = -800;
+            }
 
+        if (key == "39") {
+            laser.width = 1500;
+            laser.height = 100;
+        }
+        if (key == '40'){
+            laser.width = 100;
+            laser.height = 800;
+
+        }
+    }
     if (key == '87') {
         direction = 1;
         moveup();
 
+
     }
+
     if (key == '65') {
         direction = 2;
         moveleft();
@@ -2453,12 +2503,22 @@ window.onkeydown = function(e) {
         direction = 3;
         movedown();
     }
+    // if (key == "65" || key == "68" || key == "83" || key == "87") {
+    //     laser.width = 0;
+    //     }
     if (key == "37" || key == "38" || key == "39" || key == "40") {
         if(level == 5)
             player.color = images.stalinMountFire;
-        else
-            player.color = images.PlayerSpriteDabRedEyes;
-        }
+        else{
+            if(player.shaggy){
+                player.color = images.PlayerSpriteDabRedEyesAscended;
+            }
+            else{
+                player.color = images.PlayerSpriteDabRedEyes
+
+            }
+    }
+   }
 
 }
 var bulletsSpeed = 5;
@@ -2498,6 +2558,8 @@ window.onkeyup = function(e) {
         player.speedY = 0;
     }
     if (key == '38') {
+        laser.width = 0;
+
         shoot();
         setAllBulletSpeedY(-bulletsSpeed);
         if(explodeAmmo !=null){
@@ -2509,10 +2571,16 @@ window.onkeyup = function(e) {
         //    supullet.speedY = -bulletsSpeed;
         if(level == 5)
             player.color = images.stalinMount;
-        else
-            player.color = images.PlayerSpritefl;
+        else{
+            if(player.shaggy)
+                player.color = images.PlayerSpriteDabRedEyes;
+            else
+                player.color = images.PlayerSpritefl;
+        }
     }
     if (key == "40") {
+        laser.width = 0;
+
         shoot();
         setAllBulletSpeedY(bulletsSpeed);
         if(explodeAmmo !=null){
@@ -2524,10 +2592,16 @@ window.onkeyup = function(e) {
         //    supullet.speedY = bulletsSpeed;
         if(level == 5)
             player.color = images.stalinMount;
-        else
-            player.color = images.PlayerSpritefl;
+       else{
+            if(player.shaggy)
+                player.color = images.PlayerSpriteDabRedEyes;
+            else
+                player.color = images.PlayerSpritefl;
+        }
     }
     if (key == "37") {
+        laser.width = 0;
+
         shoot();
         setAllBulletSpeedX(-bulletsSpeed);
         if(explodeAmmo !=null){
@@ -2539,10 +2613,16 @@ window.onkeyup = function(e) {
         //    supullet.speedX = -bulletsSpeed;
         if(level == 5)
             player.color = images.stalinMount;
-        else
-            player.color = images.PlayerSpritefl;
+        else{
+            if(player.shaggy)
+                player.color = images.PlayerSpriteDabRedEyes;
+            else
+                player.color = images.PlayerSpritefl;
+        }
     }
     if (key == "39") {
+        laser.width = 0;
+
         shoot();
         setAllBulletSpeedX(bulletsSpeed);
         if(explodeAmmo !=null){
@@ -2557,8 +2637,12 @@ window.onkeyup = function(e) {
         //   supullet.speedX = bulletsSpeed;
         if(level == 5)
             player.color = images.stalinMount;
-        else
-            player.color = images.PlayerSprite;
+            else{
+                if(player.shaggy)
+                    player.color = images.PlayerSpriteDabRedEyes;
+                else
+                    player.color = images.PlayerSprite;
+            }
         }
 }
 
