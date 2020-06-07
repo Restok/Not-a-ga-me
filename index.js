@@ -206,7 +206,7 @@ function startGame() {
     player = new component(70, 58.45, images.PlayerSprite, 450, 200, "image");
     player.shaggy = true;
 
-    laser = new component(0, 100, "red",player.x,player.y,"");
+//     laser = new component(0, 100, "red",player.x,player.y,"");
 
     bbBar = new component2(500, 7, images.BossHealthBarNonspecific, 150,450, "image");
     createExplosion();
@@ -2308,8 +2308,8 @@ function updateGameArea() {
     } else {
         scrollY = 0;
     }
-    laser.x = player.x+player.width/2;
-    laser.y = player.y-player.height/2;
+//     laser1.x = player.x+player.width/2;
+//     laser1.y = player.y-player.height/2;
     scrollWrapper(scrollX, scrollY);
     if (noobPet !== null) {
         circlePath(noobPet)
@@ -2401,11 +2401,11 @@ function getItem(item) {
     }
 }
 var laserCount = 0;
-function laserDamage(subject){
-    if(laser.crashWith(subject)){
-        subject.health-=bulletsNumber;
-    }
-}
+// function laserDamage(subject){
+//     if(laser.crashWith(subject)){
+//         subject.health-=bulletsNumber;
+//     }
+// }
 function moveup() {
     if (player.y <= 0) {
         player.y = player.y;
@@ -2462,26 +2462,26 @@ function moveright() {
 }
 window.onkeydown = function(e) {
     var key = e.keyCode ? e.keyCode : e.which;
-    if(player.shaggy){
-        if (key =='37'){
-            laser.width = -1500;
-            laser.height = 100;
-        }
-        if (key == '38') {
-            laser.width = 100;
-            laser.height = -800;
-            }
+//     if(player.shaggy){
+//         if (key =='37'){
+//             laser.width = -1500;
+//             laser.height = 100;
+//         }
+//         if (key == '38') {
+//             laser.width = 100;
+//             laser.height = -800;
+//             }
 
-        if (key == "39") {
-            laser.width = 1500;
-            laser.height = 100;
-        }
-        if (key == '40'){
-            laser.width = 100;
-            laser.height = 800;
+//         if (key == "39") {
+//             laser.width = 1500;
+//             laser.height = 100;
+//         }
+//         if (key == '40'){
+//             laser.width = 100;
+//             laser.height = 800;
 
-        }
-    }
+//         }
+//     }
     if (key == '87') {
         direction = 1;
         moveup();
@@ -2558,7 +2558,7 @@ window.onkeyup = function(e) {
         player.speedY = 0;
     }
     if (key == '38') {
-        laser.width = 0;
+//         laser.width = 0;
 
         shoot();
         setAllBulletSpeedY(-bulletsSpeed);
@@ -2579,7 +2579,7 @@ window.onkeyup = function(e) {
         }
     }
     if (key == "40") {
-        laser.width = 0;
+//         laser.width = 0;
 
         shoot();
         setAllBulletSpeedY(bulletsSpeed);
@@ -2600,7 +2600,7 @@ window.onkeyup = function(e) {
         }
     }
     if (key == "37") {
-        laser.width = 0;
+//         laser.width = 0;
 
         shoot();
         setAllBulletSpeedX(-bulletsSpeed);
@@ -2621,7 +2621,7 @@ window.onkeyup = function(e) {
         }
     }
     if (key == "39") {
-        laser.width = 0;
+//         laser.width = 0;
 
         shoot();
         setAllBulletSpeedX(bulletsSpeed);
