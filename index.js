@@ -220,7 +220,7 @@ function startGame() {
 
     player.health = 6;
     allGameElements.push(player);
-    allGameElements.push(laser);
+//     allGameElements.push(laser);
 
     player.friendly = true;
     requestAnimationFrame(updateGameArea)
